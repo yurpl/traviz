@@ -3,6 +3,7 @@ library(sf)
 library(trajectories)
 library(spacetime)
 library(raster)
+library(stars)
 
 #' Convert trajectory data frame in  or lat long format to sf
 #'
@@ -55,7 +56,7 @@ sf_to_track <- function(df){
 t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
 t$time <- gsub("T", " ", t$time)
 t <- geodata_to_sf(t, "track.id")
-#t <- t[2,]
+t <- t[2,]
 t <- t %>% unnest
 plot(sf_to_track(t))
 
@@ -89,6 +90,20 @@ sf_to_raster <- function(df, data, resolution, from, to){
 }
 plot(sf_to_raster(t, "CO2.value", .005, ""))
 plot(sf_to_raster(t, "Speed.value", .01, as.POSIXct("2019-12-24 15:25:33"), as.POSIXct("2020-01-05 15:56:54")))
+
+#' sf to stars raster
+#'
+#' @param df Trajectory data frame in sf format
+#' @param value Data measurements to rasterize
+#' @return stars object
+sf_to_raster_stars <- function(df, value){
+  return(st_rasterize(df[value]))
+}
+
+
+
+
+
 
 #' Aggregate raster to region of interest
 #'
@@ -125,5 +140,4 @@ aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = N
   if (!is.null(ymax)) bb["ymax"] <- ymax
   st_filter(df, st_as_sfc(bb), .predicate = st_within)
 }
-
 

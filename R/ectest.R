@@ -22,17 +22,17 @@ trackcol_agg <- trackcol_un %>%
   filter(time2 >= "16:00:00" & time2 <= "18:00:00") %>%
   select(-time2)
 
+t
 
 
-
-rast <- raster(trackcol_agg, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = .01)
+rast <- raster(trackcol_agg, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = .0007)
 
 cropped <- crop(rast, extent(c(7.584686,7.677040,51.947122,51.979171)))
 crs(cropped) = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84"
 
 #rs <- resample(rast, cropped)
 
-r<-rasterize(trackcol_agg, cropped, trackcol_agg$Speed.value)
+r<-rasterize(trackcol_agg, rast, trackcol_agg$Speed.value)
 
 
 crs(r) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84"
