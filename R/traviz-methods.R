@@ -56,7 +56,7 @@ sf_to_track <- function(df){
 t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
 t$time <- gsub("T", " ", t$time)
 t <- geodata_to_sf(t, "track.id")
-t <- t[2,]
+t <- t[2:3,]
 t <- t %>% unnest
 plot(sf_to_track(t))
 
@@ -72,7 +72,7 @@ plot(sf_to_track(t))
 #' rasterized <- sf_to_raster(t, "CO2.value", .001)
 #' plot(rasterized)
 #'
-sf_to_raster <- function(df, data, resolution, from, to){
+sf_to_rasterize <- function(df, data, resolution, from, to){
   if(missing(from) && missing(to)){
     df <- df %>% filter(!is.na(.data[[data]]))
     r <- rasterize(df, raster(df, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution), df[[data]])
@@ -88,8 +88,8 @@ sf_to_raster <- function(df, data, resolution, from, to){
     return(r)
   }
 }
-plot(sf_to_raster(t, "CO2.value", .005, ""))
-plot(sf_to_raster(t, "Speed.value", .01, as.POSIXct("2019-12-24 15:25:33"), as.POSIXct("2020-01-05 15:56:54")))
+plot(sf_to_rasterize(t, "CO2.value", .005))
+plot(sf_to_rasterize(t, "Speed.value", .01, as.POSIXct("2019-12-24 15:25:33"), as.POSIXct("2020-01-05 15:56:54")))
 
 #' sf to stars raster
 #'
@@ -99,11 +99,6 @@ plot(sf_to_raster(t, "Speed.value", .01, as.POSIXct("2019-12-24 15:25:33"), as.P
 sf_to_raster_stars <- function(df, value){
   return(st_rasterize(df[value]))
 }
-
-
-
-
-
 
 #' Aggregate raster to region of interest
 #'
@@ -141,3 +136,23 @@ aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = N
   st_filter(df, st_as_sfc(bb), .predicate = st_within)
 }
 
+#' Interpolate raster using inverse distance weighted interpolation
+#'
+#' @param df data frame
+#' @param measurement measurement to rasterize off
+#' @param resolution desired resolution
+#' @return Interpolated raster layer
+
+#TODO: Make more elegant
+idwi_raster <- function(df, measurement, resolution){
+  df <- df %>% filter(!is.na(.data[[measurement]]))
+  gs <- gstat(formula = as.formula(paste(measurement, paste(1, collapse = "+"), sep = " ~ ")), data = df)
+  raster <- raster(df, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution)
+  i <- interpolate(raster, gs)
+  r <- rasterize(df, raster, df[[measurement]])
+  crs(r) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84"
+  interpolated = mask(i,r)
+  crs(interpolated) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84"
+  return(interpolated)
+}
+plot(idwi_raster(trackcol_agg, "Speed.value", .0005))
