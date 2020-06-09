@@ -3,6 +3,7 @@ library(sf)
 library(trajectories)
 library(spacetime)
 library(raster)
+
 #' Convert trajectory data frame in  or lat long format to sf
 #'
 #' @param df A trajectory data frame with a geometry column or in lat long format
@@ -97,14 +98,32 @@ plot(sf_to_raster(t, "Speed.value", .01, as.POSIXct("2019-12-24 15:25:33"), as.P
 #' @param ymin
 #' @param ymax
 #' @return Cropped raster to ROI
-#' @example plot(aggregate_raster_roi(sf_to_raster(t, "CO2.value", .0006), 7.63, 7.64, 51.954, 51.96))
+#' @example plot(aggregate_raster_region(sf_to_raster(t, "CO2.value", .0006), 7.63, 7.64, 51.954, 51.96))
 
-aggregate_raster_roi <- function(raster, xmin, xmax, ymin, ymax){
+aggregate_raster_region <- function(raster, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL){
+  stopifnot(!missing(xmin), !missing(xmax), !missing(ymin), !missing(ymax))
   cropped <- crop(raster, extent((c(xmin, xmax, ymin, ymax))))
   crs(cropped) = "+proj=longlat +datum=WGS84"
   return(cropped)
 }
 
+#' Aggregate sf data frame to region of interest
+#'
+#' @param df sf data frame of trajectories with geometry column
+#' @param xmin min x
+#' @param xmax max x
+#' @param ymin min y
+#' @param ymax max y
+#' @return Aggregated data frame
+#' @example aggregate_sf_roi(t, 7.6, 7.7, 52, 52.3)
 
+aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL) {
+  bb <- st_bbox(df)
+  if (!is.null(xmin)) bb["xmin"] <- xmin
+  if (!is.null(xmax)) bb["xmax"] <- xmax
+  if (!is.null(ymin)) bb["ymin"] <- ymin
+  if (!is.null(ymax)) bb["ymax"] <- ymax
+  st_filter(df, st_as_sfc(bb), .predicate = st_within)
+}
 
 
