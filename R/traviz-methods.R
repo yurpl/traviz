@@ -54,7 +54,7 @@ sf_to_track <- function(df){
 t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
 t$time <- gsub("T", " ", t$time)
 t <- geodata_to_sf(t, "track.id")
-t <- t[2,]
+#t <- t[2,]
 t <- t %>% unnest
 plot(sf_to_track(t))
 
@@ -63,15 +63,48 @@ plot(sf_to_track(t))
 #' @param df Trajectory data frame in sf format to rasterize
 #' @param data Data values wanted to rasterize
 #' @param resolution Level of resolution
-#' @return rasterized raster
+#' @param from Optional parameter from in as.POSIXct format to aggregate data from
+#' @param to Optional parameter to in as.POSIXct format to aggregate to
+#' @return rasterized object
 #' @example trajectories <- geodata_to_sf(trajectories, "track.id")
 #' rasterized <- sf_to_raster(t, "CO2.value", .001)
 #' plot(rasterized)
 #'
-sf_to_raster <- function(df, data, resolution){
-  df <- df %>% filter(!is.na(.data[[data]]))
-  r <- rasterize(df, raster(df, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution), df[[data]])
-  crs(r) <- "+proj=longlat +datum=WGS84"
-  return(r)
+sf_to_raster <- function(df, data, resolution, from, to){
+  if(missing(from) && missing(to)){
+    df <- df %>% filter(!is.na(.data[[data]]))
+    r <- rasterize(df, raster(df, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution), df[[data]])
+    crs(r) <- "+proj=longlat +datum=WGS84"
+    return(r)
+  }
+  else{
+    df <- df %>%
+      filter(!is.na(.data[[data]])) %>%
+      filter(time >= from & time <= to)
+    r <- rasterize(df, raster(df, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution), df[[data]])
+    crs(r) <- "+proj=longlat +datum=WGS84"
+    return(r)
+  }
 }
-plot(sf_to_raster(t, "CO2.value", .001))
+plot(sf_to_raster(t, "CO2.value", .005, ""))
+plot(sf_to_raster(t, "Speed.value", .01, as.POSIXct("2019-12-24 15:25:33"), as.POSIXct("2020-01-05 15:56:54")))
+
+#' Aggregate raster to region of interest
+#'
+#' @param rasterized rasterized object
+#' @param xmin
+#' @param xmax
+#' @param ymin
+#' @param ymax
+#' @return Cropped raster to ROI
+#' @example plot(aggregate_raster_roi(sf_to_raster(t, "CO2.value", .0006), 7.63, 7.64, 51.954, 51.96))
+
+aggregate_raster_roi <- function(raster, xmin, xmax, ymin, ymax){
+  cropped <- crop(raster, extent((c(xmin, xmax, ymin, ymax))))
+  crs(cropped) = "+proj=longlat +datum=WGS84"
+  return(cropped)
+}
+
+
+
+
