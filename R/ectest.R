@@ -7,7 +7,7 @@ library(lubridate)
 t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
 
 ec$time <- gsub("T", " ", ec$time)
-ec$time <- ymd_hms(ec$time)
+ec$time <- as.POSIXct(ec$time)
 ec <- st_as_sf(ec, wkt = "geometry")
 
 
@@ -48,7 +48,7 @@ interpolated = mask(i,r)
 crs(interpolated) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84"
 
 
-tm_shape(interpolated) + tm_raster(style= "cont", palette = cols)
+tm_shape(r) + tm_raster(style= "cont", palette = cols)
 
 
 

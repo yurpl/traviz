@@ -34,6 +34,7 @@ geodata_to_sf <- function(df, identifier){
   invisible(df.traj)
 }
 
+
 #' Convert sf data to Track
 #'
 #' @param df Trajectory data frame in sf and sftime format to be converted to Track
@@ -56,11 +57,32 @@ sf_to_track <- function(df){
 t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
 t$time <- gsub("T", " ", t$time)
 t <- geodata_to_sf(t, "track.id")
-t <- t[2:3,]
+t <- t[2,]
 t <- t %>% unnest
 plot(sf_to_track(t))
 
-#' sf data frame to raster with selected properties to rasterize
+#' Rasterize track data
+#'
+#' @param track track
+#' @param value value wanted to raster with
+#' @param resolution desired resolution
+#' @return rasterized object
+raster_track <- function(track, value, resolution){
+  r <- rasterize(track@sp, raster(track@sp, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution), track@data[[value]])
+  crs(r) <- "+proj=longlat +datum=WGS84"
+  return(r)
+}
+
+#' Aggregate track data frame to time of interest
+#'
+#' @param track
+#' @param from
+#' @param to
+
+aggregate_track_toi <- function(from, to)
+
+
+#' sf trajectory data frame to raster with selected properties to rasterize
 #'
 #' @param df Trajectory data frame in sf format to rasterize
 #' @param data Data values wanted to rasterize
@@ -156,3 +178,5 @@ idwi_raster <- function(df, measurement, resolution){
   return(interpolated)
 }
 plot(idwi_raster(trackcol_agg, "Speed.value", .0005))
+
+
