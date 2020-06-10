@@ -73,13 +73,7 @@ raster_track <- function(track, value, resolution){
   return(r)
 }
 
-#' Aggregate track data frame to time of interest
-#'
-#' @param track
-#' @param from
-#' @param to
 
-aggregate_track_toi <- function(from, to)
 
 
 #' sf trajectory data frame to raster with selected properties to rasterize

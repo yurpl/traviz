@@ -58,7 +58,7 @@ cols <- brewer.pal(5, "RdYlGn")
 
 
 
-mapview::mapview(r, col.region = cols)
+mapview::mapview(hex_points, col.region = cols)
 
 
 
@@ -68,8 +68,19 @@ ggplot() + geom_stars(data = st_rasterize(trackcol_agg[,24], st_as_stars(st_bbox
 st_rasterize(trackcol_agg[,24], st_as_stars(st_bbox(trackcol_agg), values = NA_real_))
 
 
+hex_points = rasterToPolygons(r)
+hex_points<-st_as_sf(hex_points)
+st_intersection(hex_points, t)
+ggplot(hex_points) + geom_sf(aes(fill = layer)) +   scale_fill_viridis_c(option = "magma")
+grid <- st_make_grid(hex_points)
+ggplot() + geom_sf(data = st_union(hex_points)) + geom_sf(data =grid, fill = NA)
 
 
+
+library(gganimate)
+p <- ggplot(t) + geom_sf()
+anim <- p + transition_states(time) + shadow_wake(0.5, alpha = FALSE)
+animate(anim, duration = 10, fps = 20, width =600, height = 600, renderer = gifski_renderer())
 
 
 
