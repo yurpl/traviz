@@ -172,5 +172,17 @@ idwi_raster <- function(df, measurement, resolution){
 }
 plot(idwi_raster(trackcol_agg, "Speed.value", .0005))
 
+#' Find density of intersections by returning raster layer of intersections
+#'
+#' @param df sf data frame
+#' @param resolution desired resolution
+#' @return rasterized intersections
+
+find_intersections_density <- function(df, resolution){
+  intersections <-st_intersection(df) %>% st_cast("POINT")
+  return(rasterize(intersections, raster(intersections, res=resolution), intersections$n.overlaps))
+}
+
+#' Animate individual trajectory
 
 
