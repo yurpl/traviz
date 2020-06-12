@@ -12,6 +12,15 @@ ec <- st_as_sf(ec, wkt = "geometry")
 
 
 trackcol <- ec.trj
+
+test_reg <- aggregate_sf_roi(trackcol, 7.6, 7.8, 51.8, 52.5)
+
+i <- st_intersection(test_reg)
+
+
+
+
+
 trackcol_un <- unnest(trackcol)
 
 
@@ -68,12 +77,12 @@ ggplot() + geom_stars(data = st_rasterize(trackcol_agg[,24], st_as_stars(st_bbox
 st_rasterize(trackcol_agg[,24], st_as_stars(st_bbox(trackcol_agg), values = NA_real_))
 
 
-hex_points = rasterToPolygons(r)
+hex_points = data.frame(rasterToPoints(r))
 hex_points<-st_as_sf(hex_points)
 st_intersection(hex_points, t)
-ggplot(hex_points) + geom_sf(aes(fill = layer)) +   scale_fill_viridis_c(option = "magma")
+ggplot(hex_points) + geom_sf(data = hex_points, aes(fill = layer)) +   scale_fill_viridis_c(option = "magma")
 grid <- st_make_grid(hex_points)
-ggplot() + geom_sf(data = st_union(hex_points)) + geom_sf(data =grid, fill = NA)
+ggplot(hex_points) + geom_sf(data = st_union(hex_points)) + geom_sf(data =grid, fill = NA) + scale_fill_viridis_c(option = "magma")
 
 
 
@@ -83,4 +92,8 @@ anim <- p + transition_states(time) + shadow_wake(0.5, alpha = FALSE)
 animate(anim, duration = 10, fps = 20, width =600, height = 600, renderer = gifski_renderer())
 
 
+pspat <- as.ppp(t)
 
+
+spi <- as_Spatial(i_points$geometry)
+spi <- spTransform(spi, CRS("+proj=longlat +datum=WGS84"))

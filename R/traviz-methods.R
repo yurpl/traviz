@@ -34,6 +34,7 @@ geodata_to_sf <- function(df, identifier){
   invisible(df.traj)
 }
 
+st_
 
 #' Convert sf data to Track
 #'
@@ -72,8 +73,6 @@ raster_track <- function(track, value, resolution){
   crs(r) <- "+proj=longlat +datum=WGS84"
   return(r)
 }
-
-
 
 
 #' sf trajectory data frame to raster with selected properties to rasterize
@@ -172,5 +171,6 @@ idwi_raster <- function(df, measurement, resolution){
   return(interpolated)
 }
 plot(idwi_raster(trackcol_agg, "Speed.value", .0005))
+
 
 
