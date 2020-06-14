@@ -183,6 +183,17 @@ find_intersections_density <- function(df, resolution){
   return(rasterize(intersections, raster(intersections, res=resolution), intersections$n.overlaps))
 }
 
-#' Animate individual trajectory
+#' Cluster trajectories
+#'
+#' @param trajectories trajectories data frame in sf format
+#' @param num_clusters desired number of clusters
+#' @return Returns clustered trajectories data frame
 
-
+cluster_traj <- function(trajectories, num_clusters){
+  st_crs(trajectories) <- "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs"
+  trajectories <- st_transform(trajectories, crs = "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+  clusters <- hclust(as.dist(st_distance(trajectories, which = "Hausdorff")))
+  trajectories$cluster = as.factor(cutree(clusters, num_clusters))
+  return((trajectories[,"cluster"]))
+}
+cluster_traj(test_reg)

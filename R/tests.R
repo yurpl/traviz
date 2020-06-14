@@ -125,7 +125,7 @@ ggplot(hex_points) + geom_sf(data = st_union(hex_points)) + geom_sf(data =grid, 
 
 
 library(gganimate)
-p <- ggplot(t) + geom_sf()
+p <- ggmap(get_map(location = 'Europe', zoom = 4)) + geom_sf(data=t, aes(fill=track.id))
 anim <- p + transition_states(time) + shadow_wake(0.5, alpha = FALSE)
 animate(anim, duration = 10, fps = 20, width =600, height = 600, renderer = gifski_renderer())
 
@@ -136,5 +136,6 @@ pspat <- as.ppp(t)
 spi <- as_Spatial(i_points$geometry)
 spi <- spTransform(spi, CRS("+proj=longlat +datum=WGS84"))
 
+plot(density(as.ppp(spi@coords, as.owin(hexes))))
 
 stdbscan(trackcol_agg$geometry, trackcol_agg$time, 1, 7, 10)
