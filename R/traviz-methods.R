@@ -34,7 +34,6 @@ geodata_to_sf <- function(df, identifier){
   invisible(df.traj)
 }
 
-st_
 
 #' Convert sf data to Track
 #'
@@ -195,5 +194,20 @@ cluster_traj <- function(trajectories, num_clusters){
   clusters <- hclust(as.dist(st_distance(trajectories, which = "Hausdorff")))
   trajectories$cluster = as.factor(cutree(clusters, num_clusters))
   return((trajectories[,"cluster"]))
+
 }
 cluster_traj(test_reg)
+
+#' Plot kernel density heat map of trajectories
+#'
+#' @param trajectories trajectories dataframe
+#' @return kernel density heatmap
+#'
+kd_heatmap <- function(trajectories){
+  lines <- as_Spatial(trajectories$geometry)
+  lines <- spTransform(lines, CRS("+proj=utm +zone=15 +ellps=WGS84"))
+  linepsp <-maptools::as.psp.SpatialLines(lines, as.owin(st_bbox(lines)))
+  plot(density(linepsp))
+  plot(linepsp, add=TRUE)
+}
+kd_heatmap(ec.trj)

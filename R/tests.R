@@ -29,7 +29,7 @@ tracks <- ec.nest %>% pull(data) %>% map(to_line) %>% st_sfc(crs = 4326)
 ec.trj <- ec.nest %>% st_sf(geometry = tracks)
 
 #Choose one track to make testing easier
-track1 <- ec.trj[2,]
+track1 <- ec.trj[40:50,]
 track1 <- track1 %>% unnest
 
 spdf <- as_Spatial(track1)
@@ -139,3 +139,21 @@ spi <- spTransform(spi, CRS("+proj=longlat +datum=WGS84"))
 plot(density(as.ppp(spi@coords, as.owin(hexes))))
 
 stdbscan(trackcol_agg$geometry, trackcol_agg$time, 1, 7, 10)
+
+
+track1 <- st_transform(track1, crs = "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+
+cl <- hclust(as.dist(st_distance(track1)))
+track1$class5 = as.factor(cutree(cl, 5))
+plot(track1[,"class5"])
+track1$class5 = as.factor(cutree(cl, 3))
+
+
+
+
+
+
+
+
+
+
