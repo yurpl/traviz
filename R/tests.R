@@ -150,10 +150,22 @@ track1$class5 = as.factor(cutree(cl, 3))
 
 
 
+lines <- as_Spatial(track1$geometry)
+lines <- spTransform(lines, CRS("+proj=utm +zone=15 +ellps=WGS84"))
+
+linepsp <-  maptools::as.psp.SpatialLines(lines, owin())
+plot(density(linepsp))
 
 
+density(as.ppp(spi@coords, as.owin(spi)))
+plot(density(as.ppp(spi@coords, as.owin(st_bbox(hex_points)))))
 
 
+test_rast <- sf_to_raster(roi, "Speed.value", .0009)
+rast_points <- data.frame(rasterToPoints(test_rast))
+rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+rast_points <- as_Spatial(rast_points)
+rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
 
-
-
+plot(density(rast_points, at="pixels", weights = rast_points$marks))
+plot(rast_points, add=TRUE)

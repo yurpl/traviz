@@ -35,6 +35,7 @@ geodata_to_sf <- function(df, identifier){
 }
 
 
+
 #' Convert sf data to Track
 #'
 #' @param df Trajectory data frame in sf and sftime format to be converted to Track
@@ -189,14 +190,12 @@ find_intersections_density <- function(df, resolution){
 #' @return Returns clustered trajectories data frame
 
 cluster_traj <- function(trajectories, num_clusters){
-  st_crs(trajectories) <- "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs"
   trajectories <- st_transform(trajectories, crs = "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
-  clusters <- hclust(as.dist(st_distance(trajectories, which = "Hausdorff")))
+  clusters <- hclust(as.dist(st_distance(trajectories, which = "Frechet")))
   trajectories$cluster = as.factor(cutree(clusters, num_clusters))
   return((trajectories[,"cluster"]))
-
 }
-cluster_traj(test_reg)
+mapview(cluster_traj(test_reg, 10))
 
 #' Plot kernel density heat map of trajectories
 #'
@@ -211,3 +210,21 @@ kd_heatmap <- function(trajectories){
   plot(linepsp, add=TRUE)
 }
 kd_heatmap(ec.trj)
+
+#' Plot kernel density heat map of trajectory measurements
+#' @param trajectories trajectories data frame
+#' @param value value desired to make heat map off
+#' @param resolution desired resolution
+#' @return plot of density heat map
+
+density_heatmap <- function(trajectories, value, resolution){
+  test_rast <- sf_to_raster(trajectories, value, resolution)
+  rast_points <- data.frame(rasterToPoints(test_rast))
+  rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+  rast_points <- as_Spatial(rast_points)
+  rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
+  plot(density(rast_points, at="pixels", weights = rast_points$marks))
+  plot(rast_points, add=TRUE)
+}
+density_heatmap(trackcol_agg, "Speed.value", .0005)
+
