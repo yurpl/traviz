@@ -44,7 +44,7 @@ geodata_to_sf <- function(df, identifier){
 #' space<-STIDF(geometry(spdf), spdf$time, spdf@data)
 # 'trajformatted <- Track(space)
 
-sf_to_track <- function(df){
+as.Track.sf <- function(df){
   #if(!('time' %in% colnames(df))){
     #stop("No timestamp column")
   #}
@@ -202,7 +202,7 @@ mapview(cluster_traj(test_reg, 10))
 #' @param trajectories trajectories dataframe
 #' @return kernel density heatmap
 #'
-kd_heatmap <- function(trajectories){
+traj_heatmap <- function(trajectories){
   lines <- as_Spatial(trajectories$geometry)
   lines <- spTransform(lines, CRS("+proj=utm +zone=15 +ellps=WGS84"))
   linepsp <-maptools::as.psp.SpatialLines(lines, as.owin(st_bbox(lines)))
