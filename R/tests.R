@@ -29,7 +29,7 @@ tracks <- ec.nest %>% pull(data) %>% map(to_line) %>% st_sfc(crs = 4326)
 ec.trj <- ec.nest %>% st_sf(geometry = tracks)
 
 #Choose one track to make testing easier
-track1 <- ec.trj[40:50,]
+track1 <- ec.trj[1,]
 track1 <- track1 %>% unnest
 
 spdf <- as_Spatial(track1)

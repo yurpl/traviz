@@ -1,10 +1,3 @@
-library(tidyverse)
-library(sf)
-library(trajectories)
-library(spacetime)
-library(raster)
-library(stars)
-
 #' Convert trajectory data frame in  or lat long format to sf
 #'
 #' @param df A trajectory data frame with a geometry column or in lat long format
@@ -43,10 +36,7 @@ geodata_to_sf <- function(df, identifier){
 #' space<-STIDF(geometry(spdf), spdf$time, spdf@data)
 # 'trajformatted <- Track(space)
 
-as.sf.Track <- function(df, id_column){
-  if(length(unique(df$id_column)) != 1){
-    stop("Not singular track. Use as.sf.TrackCollection")
-  }
+as.sf.Tracks <- function(df){
   if(any(sapply(df, is.list))){
     df <- df %>% unnest
   }
@@ -54,28 +44,19 @@ as.sf.Track <- function(df, id_column){
   df <- as_Spatial(df)
   df@proj4string = CRS("+proj=longlat +datum=WGS84")
   stidf <- STIDF(geometry(df), df$time, df@data)
-  return(Track(stidf))
+  tracks = Track(stidf)
+  return(tracks)
 }
 
 t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
 t$time <- gsub("T", " ", t$time)
 t <- geodata_to_sf(t, "track.id")
-t <- t[2,]
-t <- t %>% unnest
-plot(sf_to_track(t))
 
-#' Convert multiple trajectories in sf format to TrackCollection
-#'
-#' @param df multiple sf trajectories
-#' @return TrackCollection
+t <- t[1:10,]
 
 
-
-
-
-
-
-
+test_track1 <- as.sf.Tracks(t[6,])
+test_track2 <- as.sf.Tracks(t[4,])
 
 
 
@@ -244,4 +225,13 @@ density_heatmap <- function(trajectories, value, resolution){
   plot(rast_points, add=TRUE)
 }
 density_heatmap(trackcol_agg, "Speed.value", .0005)
+
+#' Plot space time cube of sf trajectory
+#' @param df data frame sf trajectory
+#' @return space time cube
+
+sfcube <- function(df){
+  anglr::plot3d(df)
+}
+
 
