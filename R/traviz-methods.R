@@ -35,7 +35,6 @@ geodata_to_sf <- function(df, identifier){
 }
 
 
-
 #' Convert sf data to Track
 #'
 #' @param df Trajectory data frame in sf and sftime format to be converted to Track
@@ -44,10 +43,13 @@ geodata_to_sf <- function(df, identifier){
 #' space<-STIDF(geometry(spdf), spdf$time, spdf@data)
 # 'trajformatted <- Track(space)
 
-as.Track.sf <- function(df){
-  #if(!('time' %in% colnames(df))){
-    #stop("No timestamp column")
-  #}
+as.sf.Track <- function(df, id_column){
+  if(length(unique(df$id_column)) != 1){
+    stop("Not singular track. Use as.sf.TrackCollection")
+  }
+  if(any(sapply(df, is.list))){
+    df <- df %>% unnest
+  }
   df$time <- as.POSIXct(df$time)
   df <- as_Spatial(df)
   df@proj4string = CRS("+proj=longlat +datum=WGS84")
@@ -61,6 +63,21 @@ t <- geodata_to_sf(t, "track.id")
 t <- t[2,]
 t <- t %>% unnest
 plot(sf_to_track(t))
+
+#' Convert multiple trajectories in sf format to TrackCollection
+#'
+#' @param df multiple sf trajectories
+#' @return TrackCollection
+
+
+
+
+
+
+
+
+
+
 
 #' Rasterize track data
 #'
