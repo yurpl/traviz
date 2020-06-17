@@ -258,3 +258,39 @@ plot_traj <- function(trajectories, value){
   p
 }
 plot_traj(track1, "CO2.value")
+
+#' Get XY coordinates from sf object (taken from jmlondon at https://github.com/r-spatial/sf/issues/231)
+#' @param x data frame in sf format
+#' @param names names to name XY columns
+#' @return data frame with XY columns
+sfc_as_cols <- function(x, names = c("x","y")) {
+  stopifnot(inherits(x,"sf") && inherits(sf::st_geometry(x),"sfc_POINT"))
+  ret <- sf::st_coordinates(x)
+  ret <- tibble::as_tibble(ret)
+  stopifnot(length(names) == ncol(ret))
+  x <- x[ , !names(x) %in% names]
+  ret <- setNames(ret,names)
+  dplyr::bind_cols(x,ret)
+}
+
+
+#' Animate single trajectory using movevis (BEWARE OF MEMORY/RENDERING PROBLEMS)
+#' @param trajectory singular trajectory data frame
+#' @param res temporal resolution (i.e. 5 = 5 mins)
+#' @param units units for temporal resolution (minutes at default)
+#' @param filename filename for output GIF
+#' @return animation of trajectory in GIF
+
+animate_single_track <- function(trajectory, res, filename = "trajectory.gif", unit = "min"){
+  trajectory <- sfc_as_cols(trajectory)
+  move <- df2move(trajectory, proj ="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", x='x', y='y', time='time' )
+  m <- align_move(move, res = res, unit = unit)
+  frames <- frames_spatial(m, path_colours = c("red"), map_service = "osm", map_type = "watercolor", alpha = 0.5) %>%
+    add_labels(x = "Longitude", y = "Latitude") %>%
+    add_northarrow() %>%
+    add_scalebar() %>%
+    add_timestamps(m, type = "label") %>%
+    add_progress()
+  animate_frames(frames, out_file = filename)
+}
+
