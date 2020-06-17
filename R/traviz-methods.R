@@ -82,8 +82,8 @@ raster_track <- function(track, value, resolution){
 #' @param to Optional parameter to in as.POSIXct format to aggregate to
 #' @return rasterized object
 #' @example trajectories <- geodata_to_sf(trajectories, "track.id")
-#' rasterized <- sf_to_raster(t, "CO2.value", .001)
-#' plot(rasterized)
+#'
+#' plot(sf_to_rasterize(track1, "Speed.value", .01))
 #'
 sf_to_rasterize <- function(df, data, resolution, from, to){
   if(missing(from) && missing(to)){
@@ -101,8 +101,6 @@ sf_to_rasterize <- function(df, data, resolution, from, to){
     return(r)
   }
 }
-plot(sf_to_rasterize(t, "CO2.value", .005))
-plot(sf_to_rasterize(t, "Speed.value", .01, as.POSIXct("2019-12-24 15:25:33"), as.POSIXct("2020-01-05 15:56:54")))
 
 #' sf to stars raster
 #'
@@ -121,7 +119,7 @@ sf_to_raster_stars <- function(df, value){
 #' @param ymin
 #' @param ymax
 #' @return Cropped raster to ROI
-#' @example plot(aggregate_raster_region(sf_to_raster(t, "CO2.value", .0006), 7.63, 7.64, 51.954, 51.96))
+#' @example plot(aggregate_raster_region(sf_to_raster(track1, "CO2.value", .0006), 7.63, 7.64, 51.954, 51.96))
 
 aggregate_raster_region <- function(raster, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL){
   stopifnot(!missing(xmin), !missing(xmax), !missing(ymin), !missing(ymax))
@@ -168,7 +166,6 @@ idwi_raster <- function(df, measurement, resolution){
   crs(interpolated) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84"
   return(interpolated)
 }
-plot(idwi_raster(trackcol_agg, "Speed.value", .0005))
 
 #' Find density of intersections by returning raster layer of intersections
 #'
@@ -193,7 +190,7 @@ cluster_traj <- function(trajectories, num_clusters){
   trajectories$cluster = as.factor(cutree(clusters, num_clusters))
   return((trajectories[,"cluster"]))
 }
-mapview(cluster_traj(test_reg, 10))
+mapview::mapview(cluster_traj(test_reg, 10))
 
 #' Plot kernel density heat map of trajectories
 #'
@@ -226,6 +223,19 @@ density_heatmap <- function(trajectories, value, resolution){
 }
 density_heatmap(trackcol_agg, "Speed.value", .0005)
 
+
+
+#' Plot quadrat intensity of points of a trajectory
+#' @param trajectories sf trajectories data frame
+#' @return plot of density heat map
+traj_quadrat <- function(trajectories){
+  spdf <- as_Spatial(trajectories)
+  spdf.ppp <- maptools::as.ppp.SpatialPointsDataFrame(spdf)
+  plot(intensity(quadratcount(spdf.ppp), image=TRUE))
+  plot(trajectories$geometry, add=TRUE)
+}
+
+
 #' Plot space time cube of sf trajectory
 #' @param df data frame sf trajectory
 #' @return space time cube
@@ -235,3 +245,16 @@ sfcube <- function(df){
 }
 
 
+#' Plot trajectories using ggplot2
+#' @param trajectories trajectories data frame
+#' @param value value to base scale off
+#' @return ggplot2 of trajectories
+
+plot_traj <- function(trajectories, value){
+  p <- ggplot() +
+    geom_sf() +
+    geom_sf(data = trajectories, aes(color = .data[[value]]))+
+    scale_color_gradient(low = "yellow", high = "red", na.value = NA)
+  p
+}
+plot_traj(track1, "CO2.value")
