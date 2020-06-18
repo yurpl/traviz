@@ -4,8 +4,8 @@ setClass("sfTrack",
            id = "character",
            data = "data.frame",
            time = "POSIXct",
-           geometry = "sfc_POINT",
-           line = "sfc_LINESTRING"
+           geometry = "sfc",
+           line = "sfc"
          ))
 
 sfTrack = function(df, identifier){
