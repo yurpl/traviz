@@ -1,6 +1,6 @@
 #Singular sfTrack
 setClass("sfTrack",
-         slots = c(
+         representation(
            id = "character",
            data = "data.frame",
            time = "POSIXct",
