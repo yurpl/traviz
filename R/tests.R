@@ -10,14 +10,14 @@ library(sp)
 library(sf)
 library(spacetime)
 #
-# #
-# # ec <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
-# #
-# # ec$time <- gsub("T", " ", ec$time)
-# # #ec$time <- as.POSIXct(ec$time)
-# # ec$time <- ymd_hms(ec$time)
-# #
-# # ec <- st_as_sf(ec, wkt = "geometry")
+
+ec <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
+
+ec$time <- gsub("T", " ", ec$time)
+ec$time <- as.POSIXct(ec$time)
+ec$time <- ymd_hms(ec$time)
+
+ec <- st_as_sf(ec, wkt = "geometry")
 # #
 # # to_line <- function(tr) st_cast(st_combine(tr), "LINESTRING") %>% .[[1]]
 # #
@@ -29,8 +29,8 @@ library(spacetime)
 # # ec.trj <- ec.nest %>% st_sf(geometry = tracks)
 # #
 # # #Choose one track to make testing easier
-# track1 <- ec.trj[1,]
-# track1 <- track1 %>% unnest
+tracktest <- ec.trj[1,]
+tracktest <- tracktest %>% unnest
 # #
 # # spdf <- as_Spatial(track1)
 # #
@@ -171,28 +171,29 @@ library(spacetime)
 #
 # ights = rast_points$marks))
 # # plot(rast_points, add=TRUE)
+#
+# sfc_as_cols <- function(x, names = c("x","y")) {
+#   stopifnot(inherits(x,"sf") && inherits(sf::st_geometry(x),"sfc_POINT"))
+#   ret <- sf::st_coordinates(x)
+#   ret <- tibble::as_tibble(ret)
+#   stopifnot(length(names) == ncol(ret))
+#   x <- x[ , !names(x) %in% names]
+#   ret <- setNames(ret,names)
+#   dplyr::bind_cols(x,ret)
+# }
+#
+# track1 <- sfc_as_cols(track1)
+# library(moveVis)
+# move <- df2move(track1, proj ="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", x='x', y='y', time='time' )
+# m <- align_move(move, res = 5, unit = "mins")
+# frames <- frames_spatial(m, path_colours = c("red"), map_service = "osm", map_type = "watercolor", alpha = 0.5) %>%
+#   add_labels(x = "Longitude", y = "Latitude") %>%
+#   add_northarrow() %>%
+#   add_scalebar() %>%
+#   add_timestamps(m, type = "label") %>%
+#   add_progress()
+#
+# animate_frames(frames, out_file = "trajectory.gif")
 
-sfc_as_cols <- function(x, names = c("x","y")) {
-  stopifnot(inherits(x,"sf") && inherits(sf::st_geometry(x),"sfc_POINT"))
-  ret <- sf::st_coordinates(x)
-  ret <- tibble::as_tibble(ret)
-  stopifnot(length(names) == ncol(ret))
-  x <- x[ , !names(x) %in% names]
-  ret <- setNames(ret,names)
-  dplyr::bind_cols(x,ret)
-}
-
-track1 <- sfc_as_cols(track1)
-library(moveVis)
-move <- df2move(track1, proj ="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", x='x', y='y', time='time' )
-m <- align_move(move, res = 5, unit = "mins")
-frames <- frames_spatial(m, path_colours = c("red"), map_service = "osm", map_type = "watercolor", alpha = 0.5) %>%
-  add_labels(x = "Longitude", y = "Latitude") %>%
-  add_northarrow() %>%
-  add_scalebar() %>%
-  add_timestamps(m, type = "label") %>%
-  add_progress()
-
-animate_frames(frames, out_file = "moveVis.gif")
 
 
