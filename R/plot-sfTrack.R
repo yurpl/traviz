@@ -17,7 +17,7 @@ plot(sft1)
 plot(sft1, "CO2.value")
 plot(sft1, "Speed.value")
 
-plot.sfTracks <- function(x, y, ..., xlim){
+plot.sfTracks <- function(x, y, ...){
   if(missing(y)){
     p <- ggplot()
     for(i in 1:length(x@tracks)){
