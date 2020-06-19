@@ -8,31 +8,17 @@ setClass("sfTrack",
            line = "sfc"
          ))
 
-sfTrack = function(df, identifier){
-  if(missing(identifier)){
-    stop("Missing unique identifier to group geometries by")
+sfTrack = function(df){
+  if(!is(df, "sf") || !is(df, "data.frame")){
+    df <- geodata_to_sf(df)
   }
-
-  if("geometry" %in% colnames(df)){
-    df <- st_as_sf(df, wkt = "geometry")
-  }
-  else if("lat" %in% colnames(df) && "long" %in% colnames(df)){
-    df <- st_as_sf(coords = c("long", "lat"), crs = 4326)
-  }
-  to_line <- function(tr) st_cast(st_combine(tr), "LINESTRING") %>% .[[1]]
-
-  df.nest <- df %>% group_by(.data[[identifier]]) %>% nest
-  tracks <- df.nest %>% pull(data) %>% map(to_line) %>% st_sfc(crs = 4326)
-  df.traj = df.nest %>% st_sf(geometry = tracks)
-  st_set_crs(df.traj, 4326)
-  df.traj.un <- unnest(df.traj)
-  new("sfTrack", id = df.traj$track.id, data = data.frame(df.traj$data), time = df.traj.un$time, geometry = df.traj.un$geometry, line = df.traj$geometry)
+  df.un <- df %>% unnest
+  new("sfTrack", id = df$track.id, data = data.frame(df$data), time = df.un$time, geometry = df.un$geometry, line = df$geometry)
 }
 
-trajectories <- ec[1:500,]
-trajectories2 <- ec[600:1000,]
-sft1 = sfTrack(trajectories, "track.id")
-sft2 = sfTrack(trajectories2, "track.id")
+trajectories <- ec.trj[1,]
+trajectories2 <- ec.trj[6,]
+sft2 = sfTrack(trajectories2)
 
 #Multiple sftracks
 setClass("sfTracks",
