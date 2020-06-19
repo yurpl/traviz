@@ -13,11 +13,13 @@ sfTrack = function(df){
     df <- geodata_to_sf(df)
   }
   df.un <- df %>% unnest
+  df.un$geometry <- df.un$geometry %>% st_set_crs(4326)
   new("sfTrack", id = df$track.id, data = data.frame(df$data), time = df.un$time, geometry = df.un$geometry, line = df$geometry)
 }
 
-trajectories <- ec.trj[1,]
-trajectories2 <- ec.trj[6,]
+trajectories1 <- ec.trj[55,]
+trajectories2 <- ec.trj[56,]
+sft1 = sfTrack(trajectories1)
 sft2 = sfTrack(trajectories2)
 
 #Multiple sftracks
