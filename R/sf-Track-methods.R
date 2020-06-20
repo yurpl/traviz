@@ -34,6 +34,8 @@ print.sfTrack <- function(sft){
 }
 setMethod("show", "sfTrack", print.sfTrack)
 
-print.sfTracks <- function(){
-
+print.sfTracks <- function(sft){
+  cat("An object of class sfTracks" ,"\n");
+  cat(paste0(length(sft@tracks)), "sftracks")
 }
+setMethod("show", "sfTracks", print.sfTracks)
