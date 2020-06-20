@@ -23,3 +23,17 @@ st_distance.sfTrack <- function(sft1, sft2, which = ""){
 setMethod("st_distance", "sfTrack", st_distance.sfTrack)
 
 st_distance(sft1, sft2, "Frechet")
+
+print.sfTrack <- function(sft){
+  track = sft
+  cat("An object of class sfTrack \n");
+  cat(paste0(nrow(as.data.frame(track@geometry)), "points"),"\n");
+  cat(paste0("bbox:"),"\n");
+  print(sf::st_bbox(track@geometry));
+  cat(paste0("Time period: [",min(track@time),", ", max(track@time),"]"))
+}
+setMethod("show", "sfTrack", print.sfTrack)
+
+print.sfTracks <- function(){
+
+}
