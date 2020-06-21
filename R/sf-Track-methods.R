@@ -39,3 +39,13 @@ print.sfTracks <- function(sft){
   cat(paste0(length(sft@tracks)), "sftracks")
 }
 setMethod("show", "sfTracks", print.sfTracks)
+
+#Coerce to Track
+setAs("sfTrack", "Track",
+      function(from){
+        geometry <- sf::as_Spatial(from@geometry)
+        geometry@proj4string = CRS("+proj=longlat +datum=WGS84")
+        stidf <- STIDF(sp::geometry(geometry), from@time, from@data)
+        track = Track(stidf)
+        return(track)
+      })

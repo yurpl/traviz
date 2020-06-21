@@ -33,3 +33,5 @@ sfTracks = function(tracks){
   new("sfTracks", tracks = tracks)
 }
 sftc <- sfTracks(c(sft1, sft2))
+
+
