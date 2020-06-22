@@ -42,6 +42,12 @@ intersection.sfTrack <- function(sft1, sft2, zoom = FALSE){
 
 setMethod("intersection", "sfTrack", intersection.sfTrack)
 
+cluster.sfTracks <- function(sftc, num_clusters){
+  trajectories <- unlist(sftc)
+  clusters <- hclust(as.dist(st_distance(trajectories, which = "Frechet")))
+  trajectories$cluster = as.factor(cutree(clusters, num_clusters))
+  return((trajectories[,"cluster"]))
+}
 
 setGeneric(
   name = "distance",
@@ -83,7 +89,23 @@ setAs("sfTrack", "Track",
         return(track)
       })
 
-#sf methods for ease of use when working with sfTracks
+#Coerce to data frame
+setAs("sfTrack", "data.frame",
+      function(from) as(from@data, "data.frame")
+)
+
+setAs("sfTracks", "data.frame",
+      function(from){
+        l <- lapply(from@tracks, function(x) rbind(as(x, "data.frame"), NA))
+        for(i in 1:length(l)){
+          l[[i]]$track.id <- from@tracks[[i]]@id
+        }
+        d = do.call(rbind, l)
+        rownames(d) <- NULL
+        d
+      }
+      )
+
 setMethod("st_bbox", "sfTrack",
           function(obj) {
             st_bbox(obj@line)
