@@ -37,3 +37,4 @@ plot.sfTracks <- function(x, y, ...){
 
 setMethod("plot", "sfTracks", plot.sfTracks)
 plot(sftc)
+

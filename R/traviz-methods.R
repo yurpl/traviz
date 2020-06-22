@@ -293,3 +293,4 @@ animate_single_track <- function(trajectory, res, filename = "trajectory.gif", u
     add_progress()
   animate_frames(frames, out_file = filename)
 }
+
