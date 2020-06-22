@@ -12,11 +12,14 @@ geodata_to_sf <- function(df, identifier){
     stop("Missing unique identifier to group geometries by")
   }
 
-  if("geometry" %in% colnames(df)){
+  if("geometry" %in% colnames(df) && class(df$geometry) != "sfc" && class(df$geometry) != "sfc_POINT" ){
     df <- st_as_sf(df, wkt = "geometry")
   }
   else if("lat" %in% colnames(df) && "long" %in% colnames(df)){
     df <- st_as_sf(coords = c("long", "lat"), crs = 4326)
+  }
+  else{
+    df <- st_as_sf(df, df$geometry)
   }
   to_line <- function(tr) st_cast(st_combine(tr), "LINESTRING") %>% .[[1]]
 

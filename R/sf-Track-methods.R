@@ -43,11 +43,15 @@ intersection.sfTrack <- function(sft1, sft2, zoom = FALSE){
 setMethod("intersection", "sfTrack", intersection.sfTrack)
 
 cluster.sfTracks <- function(sftc, num_clusters){
-  trajectories <- unlist(sftc)
-  clusters <- hclust(as.dist(st_distance(trajectories, which = "Frechet")))
-  trajectories$cluster = as.factor(cutree(clusters, num_clusters))
+  trajectories <- as(sftc, "data.frame")
+  trajectories.nest <- geodata_to_sf(trajectories, "track.id")
+  clusters <- hclust(as.dist(st_distance(trajectories.nest$geometry, which = "Frechet")))
+  trajectories.nest$cluster = as.factor(cutree(clusters, num_clusters))
   return((trajectories[,"cluster"]))
 }
+setMethod("cluster.sfTracks", "sfTrack", cluster.sfTracks)
+
+
 
 setGeneric(
   name = "distance",
