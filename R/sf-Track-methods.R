@@ -38,27 +38,24 @@ intersection.sfTrack <- function(sft1, sft2, zoom = FALSE){
       labs(color = "Track ID")
     return(p)
   }
-
-
 }
 
 setMethod("intersection", "sfTrack", intersection.sfTrack)
 
 
-
 setGeneric(
-  name = "st_distance",
-  def = function(sft1, sft2, ...) standardGeneric("st_distance")
+  name = "distance",
+  def = function(sft1, sft2, ...) standardGeneric("distance")
 )
 
-st_distance.sfTrack <- function(sft1, sft2, which = ""){
+distance.sfTrack <- function(sft1, sft2, which = ""){
   dist <- sf::st_distance(sft1@line, sft2@line, which = which)
   return(dist)
 }
 
-setMethod("st_distance", "sfTrack", st_distance.sfTrack)
+setMethod("distance", "sfTrack", distance.sfTrack)
 
-st_distance(sft1, sft2, "Frechet")
+distance(sft1, sft2, "Frechet")
 
 print.sfTrack <- function(sft){
   track = sft
@@ -85,3 +82,12 @@ setAs("sfTrack", "Track",
         track = Track(stidf)
         return(track)
       })
+
+
+setMethod("st_bbox", "sfTrack",
+          function(obj) {
+            st_bbox(obj@line)
+          })
+
+
+
