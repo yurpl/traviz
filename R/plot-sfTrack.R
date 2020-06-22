@@ -21,9 +21,9 @@ plot.sfTracks <- function(x, y, ...){
   if(missing(y)){
     p <- ggplot()
     for(i in 1:length(x@tracks)){
-      p <- p + geom_sf(data = x@tracks[[i]]@line)
+      p <- p + geom_sf(data = x@tracks[[i]]@line, aes(color = x@tracks[[!!i]]@id[[1]]))
     }
-    print(p)
+    p + labs(color = "Track ID")
   }
   else{
     p <- ggplot()
@@ -36,4 +36,4 @@ plot.sfTracks <- function(x, y, ...){
 }
 
 setMethod("plot", "sfTracks", plot.sfTracks)
-plot(sftc, "CO2.value")
+plot(sftc)
