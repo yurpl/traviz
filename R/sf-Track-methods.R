@@ -83,11 +83,19 @@ setAs("sfTrack", "Track",
         return(track)
       })
 
-
+#sf methods for ease of use when working with sfTracks
 setMethod("st_bbox", "sfTrack",
           function(obj) {
             st_bbox(obj@line)
           })
 
+setMethod("stcube", "sfTrack",
+          function(x, ...){
+            trajectories::stcube(as(x, "Track"))
+            })
 
+setMethod("st_length", "sfTrack",
+          function(x){
+            sf::st_length(x@line)
+          })
 
