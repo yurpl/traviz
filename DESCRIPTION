@@ -7,17 +7,15 @@ Maintainer: John Murzaku <john.murzaku@gmail.com>
 Description: sfTrack class to support sf trajectories with methods for trajectory visualization and analysis. Support for point pattern analysis, rasterization of trajectory data, and hotspot analysis.
 Imports: 
   raster, 
-  tidyverse, 
-  lubridate, 
-  sp, 
-  spacetime, 
+  lubridate,
   moveVis
 Depends:
   sf,
   trajectories,
   tidyverse,
   sp,
-  spacetime
+  spacetime,
+  Rcpp
 License: What license is it under?
 URL: https://github.com/JamMurz/traviz
 Encoding: UTF-8
