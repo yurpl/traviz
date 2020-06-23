@@ -10,12 +10,13 @@ Imports:
   lubridate,
   moveVis
 Depends:
-  sf,
-  trajectories,
-  tidyverse,
-  sp,
-  spacetime,
-  Rcpp
+    sf,
+    trajectories,
+    tidyverse,
+    sp,
+    spacetime,
+    Rcpp,
+    R (>= 2.10)
 License: What license is it under?
 URL: https://github.com/JamMurz/traviz
 Encoding: UTF-8
