@@ -6,9 +6,6 @@ st_transform.sfTrack <- function(x, crs = ""){
 
 setMethod("st_transform", "sfTrack", st_transform.sfTrack)
 
-sft1 <- st_transform(sft1, "+proj=utm")
-sft2 <- st_transform(sft2, "+proj=utm")
-
 setGeneric(
   name = "intersection",
   def = function(sft1, sft2, ...) standardGeneric("intersection")
@@ -65,7 +62,6 @@ distance.sfTrack <- function(sft1, sft2, which = ""){
 
 setMethod("distance", "sfTrack", distance.sfTrack)
 
-distance(sft1, sft2, "Frechet")
 
 print.sfTrack <- function(sft){
   track = sft

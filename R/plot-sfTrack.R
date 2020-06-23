@@ -13,9 +13,6 @@ plot.sfTrack <- function(x, y, ...){
 
 setMethod("plot", "sfTrack", plot.sfTrack)
 
-plot(sft1)
-plot(sft1, "CO2.value")
-plot(sft1, "Speed.value")
 
 plot.sfTracks <- function(x, y, ...){
   if(missing(y)){
@@ -36,5 +33,5 @@ plot.sfTracks <- function(x, y, ...){
 }
 
 setMethod("plot", "sfTracks", plot.sfTracks)
-plot(sftc)
+
 
