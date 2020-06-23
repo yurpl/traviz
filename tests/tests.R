@@ -1,22 +1,22 @@
 # # #FILE FOR TESTING SCRIPTS AND IDEAS
 # #
 # #
-library(raster)
-library(RColorBrewer)
-library(lubridate)
-library(trajectories)
-library(tidyverse)
-library(sp)
-library(sf)
-library(spacetime)
+# library(raster)
+# library(RColorBrewer)
+# library(lubridate)
+# library(trajectories)
+# library(tidyverse)
+# library(sp)
+# library(sf)
+# library(spacetime)
 # #
 #
-ec <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
+# ec <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
+# #
 #
-
-t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
-t$time <- gsub("T", " ", t$time)
-trajectories <- traviz::geodata_to_sf(t, "track.id")
+# t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
+# t$time <- gsub("T", " ", t$time)
+# trajectories <- traviz::geodata_to_sf(t, "track.id")
 #
 # t <- t[1:10,]
 #
