@@ -13,6 +13,14 @@ aggregate_raster_region(
 )
 }
 \arguments{
+\item{xmin}{min x value}
+
+\item{xmax}{max x calue}
+
+\item{ymin}{min y value}
+
+\item{ymax}{max y value}
+
 \item{rasterized}{rasterized object}
 }
 \value{

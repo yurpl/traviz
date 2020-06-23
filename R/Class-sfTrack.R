@@ -1,4 +1,11 @@
-#Singular sfTrack
+#' A Track in sf format
+#'
+#' @slot id unique id value for track
+#' @slot data dataframe of track data
+#' @slot time POSIXct format timestamps
+#' @slot geometry geometry of track in sfc format
+#' @slot line LINESTRING trajectory of track
+#'
 setClass("sfTrack",
          representation(
            id = "character",
@@ -17,7 +24,8 @@ sfTrack = function(df){
   new("sfTrack", id = df$track.id, data = data.frame(df$data), time = df.un$time, geometry = df.un$geometry, line = df$geometry)
 }
 
-#Multiple sftracks
+#' Multiple sfTracks
+#' @slot list list of sfTracks
 setClass("sfTracks",
          representation(tracks = "list")
          )

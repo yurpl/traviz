@@ -1,37 +1,47 @@
-# #FILE FOR TESTING SCRIPTS AND IDEAS
+# # #FILE FOR TESTING SCRIPTS AND IDEAS
+# #
+# #
+# library(raster)
+# library(RColorBrewer)
+# library(lubridate)
+# library(trajectories)
+# library(tidyverse)
+# library(sp)
+# library(sf)
+# library(spacetime)
+# #
 #
-#
-library(raster)
-library(RColorBrewer)
-library(lubridate)
-library(trajectories)
-library(tidyverse)
-library(sp)
-library(sf)
-library(spacetime)
+# ec <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
 #
 
-ec <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
-
-ec$time <- gsub("T", " ", ec$time)
-ec$time <- as.POSIXct(ec$time)
-ec$time <- ymd_hms(ec$time)
-
-ec <- st_as_sf(ec, wkt = "geometry")
-# #
-# # to_line <- function(tr) st_cast(st_combine(tr), "LINESTRING") %>% .[[1]]
-# #
-# # ec.nest <- ec %>% group_by(track.id) %>% nest
-# #
-# #
-# # tracks <- ec.nest %>% pull(data) %>% map(to_line) %>% st_sfc(crs = 4326)
-# #
-# # ec.trj <- ec.nest %>% st_sf(geometry = tracks)
-# #
-# # #Choose one track to make testing easier
-tracktest <- ec.trj[1,]
-tracktest <- tracktest %>% unnest
-# #
+# t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
+# t$time <- gsub("T", " ", t$time)
+# t <- geodata_to_sf(t, "track.id")
+#
+# t <- t[1:10,]
+#
+#
+# test_track1 <- as.sf.Tracks(t[6,])
+# test_track2 <- as.sf.Tracks(t[4,])
+# ec$time <- gsub("T", " ", ec$time)
+# ec$time <- as.POSIXct(ec$time)
+# ec$time <- ymd_hms(ec$time)
+#
+# ec <- st_as_sf(ec, wkt = "geometry")
+# # #
+# # # to_line <- function(tr) st_cast(st_combine(tr), "LINESTRING") %>% .[[1]]
+# # #
+# # # ec.nest <- ec %>% group_by(track.id) %>% nest
+# # #
+# # #
+# # # tracks <- ec.nest %>% pull(data) %>% map(to_line) %>% st_sfc(crs = 4326)
+# # #
+# # # ec.trj <- ec.nest %>% st_sf(geometry = tracks)
+# # #
+# # # #Choose one track to make testing easier
+# tracktest <- ec.trj[1,]
+# tracktest <- tracktest %>% unnest
+# # #
 # # spdf <- as_Spatial(track1)
 # #
 # # space<-STIDF(geometry(spdf), spdf$time, spdf@data)

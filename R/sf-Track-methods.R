@@ -1,10 +1,10 @@
-st_transform.sfTrack <- function(x, crs = ""){
+transform.sfTrack <- function(x, crs = ""){
   x@line = sf::st_transform(x@line, crs)
   x@geometry = sf::st_transform(x@geometry, crs)
   return(x)
 }
 
-setMethod("st_transform", "sfTrack", st_transform.sfTrack)
+setMethod("transform.sfTrack", "sfTrack", transform.sfTrack)
 
 setGeneric(
   name = "intersection",
@@ -63,8 +63,8 @@ distance.sfTrack <- function(sft1, sft2, which = ""){
 setMethod("distance", "sfTrack", distance.sfTrack)
 
 
-print.sfTrack <- function(sft){
-  track = sft
+print.sfTrack <- function(object){
+  track = object
   cat("An object of class sfTrack \n");
   cat(paste0(nrow(as.data.frame(track@geometry)), "points"),"\n");
   cat(paste0("bbox:"),"\n");
@@ -73,9 +73,9 @@ print.sfTrack <- function(sft){
 }
 setMethod("show", "sfTrack", print.sfTrack)
 
-print.sfTracks <- function(sft){
+print.sfTracks <- function(object){
   cat("An object of class sfTracks" ,"\n");
-  cat(paste0(length(sft@tracks)), "sftracks")
+  cat(paste0(length(object@tracks)), "sftracks")
 }
 setMethod("show", "sfTracks", print.sfTracks)
 
@@ -106,18 +106,21 @@ setAs("sfTracks", "data.frame",
       }
       )
 
-setMethod("st_bbox", "sfTrack",
-          function(obj) {
-            st_bbox(obj@line)
-          })
+sft_bbox <- function(sft){
+  return(sf::st_bbox(sft@line))
+}
 
-setMethod("stcube", "sfTrack",
-          function(x, ...){
-            trajectories::stcube(as(x, "Track"))
-            })
+setMethod("sft_bbox", "sfTrack", sft_bbox)
 
-setMethod("st_length", "sfTrack",
-          function(x){
-            sf::st_length(x@line)
-          })
+cube.sfTrack <- function(x, ...){
+  trajectories::stcube(as(x, "Track"))
+}
+
+setMethod("cube.sfTrack", "sfTrack", cube.sfTrack)
+
+
+sft_length <- function(sft){
+  return(sf::st_length(x@line))
+}
+setMethod("sft_length", "sfTrack", sft_length)
 

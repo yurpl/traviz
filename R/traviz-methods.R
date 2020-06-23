@@ -3,9 +3,7 @@
 #' @param df A trajectory data frame with a geometry column or in lat long format
 #' @param identifier Unique identifier to group data frame by
 #' @return A nested data frame in sf format
-#' @example
-#' trajectories <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
-#' trajectories <- geodata_to_sf(trajectories, "track.id")
+
 
 geodata_to_sf <- function(df, identifier){
   if(missing(identifier)){
@@ -35,9 +33,6 @@ geodata_to_sf <- function(df, identifier){
 #'
 #' @param df Trajectory data frame in sf and sftime format to be converted to Track
 #' @return Track
-#' @example spdf <- as_Spatial(df)
-#' space<-STIDF(geometry(spdf), spdf$time, spdf@data)
-# 'trajformatted <- Track(space)
 
 as.sf.Tracks <- function(df){
   if(any(sapply(df, is.list))){
@@ -51,15 +46,6 @@ as.sf.Tracks <- function(df){
   return(tracks)
 }
 
-t <- read.csv("tracks.csv",header = TRUE, check.names = TRUE)
-t$time <- gsub("T", " ", t$time)
-t <- geodata_to_sf(t, "track.id")
-
-t <- t[1:10,]
-
-
-test_track1 <- as.sf.Tracks(t[6,])
-test_track2 <- as.sf.Tracks(t[4,])
 
 
 
@@ -84,10 +70,6 @@ raster_track <- function(track, value, resolution){
 #' @param from Optional parameter from in as.POSIXct format to aggregate data from
 #' @param to Optional parameter to in as.POSIXct format to aggregate to
 #' @return rasterized object
-#' @example trajectories <- geodata_to_sf(trajectories, "track.id")
-#'
-#' plot(sf_to_rasterize(track1, "Speed.value", .01))
-#'
 sf_to_rasterize <- function(df, data, resolution, from, to){
   if(missing(from) && missing(to)){
     df <- df %>% filter(!is.na(.data[[data]]))
@@ -117,12 +99,11 @@ sf_to_raster_stars <- function(df, value){
 #' Aggregate raster to region of interest
 #'
 #' @param rasterized rasterized object
-#' @param xmin
-#' @param xmax
-#' @param ymin
-#' @param ymax
+#' @param xmin min x value
+#' @param xmax max x calue
+#' @param ymin min y value
+#' @param ymax max y value
 #' @return Cropped raster to ROI
-#' @example plot(aggregate_raster_region(sf_to_raster(track1, "CO2.value", .0006), 7.63, 7.64, 51.954, 51.96))
 
 aggregate_raster_region <- function(raster, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL){
   stopifnot(!missing(xmin), !missing(xmax), !missing(ymin), !missing(ymax))
@@ -139,7 +120,6 @@ aggregate_raster_region <- function(raster, xmin = NULL, xmax = NULL, ymin = NUL
 #' @param ymin min y
 #' @param ymax max y
 #' @return Aggregated data frame
-#' @example aggregate_sf_roi(t, 7.6, 7.7, 52, 52.3)
 
 aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL) {
   bb <- st_bbox(df)
@@ -189,11 +169,10 @@ find_intersections_density <- function(df, resolution){
 
 cluster_traj <- function(trajectories, num_clusters){
   trajectories <- st_transform(trajectories, crs = "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
-  clusters <- hclust(as.dist(st_distance(trajectories, which = "Frechet")))
+  clusters <- hclust(as.dist(sf::st_distance(trajectories, which = "Frechet")))
   trajectories$cluster = as.factor(cutree(clusters, num_clusters))
   return((trajectories[,"cluster"]))
 }
-mapview::mapview(cluster_traj(test_reg, 10))
 
 #' Plot kernel density heat map of trajectories
 #'
@@ -207,7 +186,7 @@ traj_heatmap <- function(trajectories){
   plot(density(linepsp))
   plot(linepsp, add=TRUE)
 }
-kd_heatmap(ec.trj)
+#kd_heatmap(ec.trj)
 
 #' Plot kernel density heat map of trajectory measurements
 #' @param trajectories trajectories data frame
@@ -224,7 +203,6 @@ density_heatmap <- function(trajectories, value, resolution){
   plot(density(rast_points, at="pixels", weights = rast_points$marks))
   plot(rast_points, add=TRUE)
 }
-density_heatmap(trackcol_agg, "Speed.value", .0005)
 
 
 
@@ -260,7 +238,6 @@ plot_traj <- function(trajectories, value){
     scale_color_gradient(low = "yellow", high = "red", na.value = NA)
   p
 }
-plot_traj(track1, "CO2.value")
 
 #' Get XY coordinates from sf object (taken from jmlondon at https://github.com/r-spatial/sf/issues/231)
 #' @param x data frame in sf format
