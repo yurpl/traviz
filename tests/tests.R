@@ -205,5 +205,12 @@
 #
 # animate_frames(frames, out_file = "trajectory.gif")
 
+#Append data frame to sfTracks (TODO: MAKE A METHOD)
 
+# list_nest <- list()
+# for(i in 1:length(test_nest)){
+#   track <- traviz::sfTrack(test_nest[i,])
+#   list_nest <- append(list_nest, track)
+# }
+# sfTracks(list_nest)
 

@@ -15,8 +15,8 @@ setClass("sfTrack",
            line = "sfc"
          ))
 
-sfTrack = function(df){
-  if(!is(df, "sf") || !is(df, "data.frame")){
+sfTrack = function(df, identifier){
+  if(!is(df, "sf")){
     df <- geodata_to_sf(df)
   }
   df.un <- df %>% unnest

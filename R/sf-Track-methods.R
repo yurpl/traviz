@@ -123,4 +123,3 @@ sft_length <- function(sft){
   return(sf::st_length(x@line))
 }
 setMethod("sft_length", "sfTrack", sft_length)
-
