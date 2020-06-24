@@ -195,7 +195,7 @@ traj_heatmap <- function(trajectories){
 #' @return plot of density heat map
 
 density_heatmap <- function(trajectories, value, resolution){
-  test_rast <- sf_to_raster(trajectories, value, resolution)
+  test_rast <- sf_to_rasterize(trajectories, value, resolution)
   rast_points <- data.frame(rasterToPoints(test_rast))
   rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
   rast_points <- as_Spatial(rast_points)
