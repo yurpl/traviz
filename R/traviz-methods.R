@@ -279,10 +279,10 @@ animate_single_track <- function(trajectory, res, filename = "trajectory.gif", u
 #' @param df data frame to coerce
 #' @return sfTracks object
 df_to_sfTracks <- function(df){
-  list_nest <- list()
-  for(i in 1:length(df)){
-    track <- traviz::sfTrack(test_nest[i,])
-    list_nest <- append(list_nest, track)
+  nest_ls <- list()
+  for(i in 1:nrow(df)){
+    track <- sfTrack(df[i,])
+    nest_ls <- append(nest_ls, track)
   }
-  return(sfTracks(df))
+  return(sfTracks(nest_ls))
 }
