@@ -183,7 +183,7 @@ traj_heatmap <- function(trajectories){
   lines <- as_Spatial(trajectories$geometry)
   lines <- spTransform(lines, CRS("+proj=utm +zone=15 +ellps=WGS84"))
   linepsp <-maptools::as.psp.SpatialLines(lines, as.owin(st_bbox(lines)))
-  plot(density(linepsp))
+  plot(density(linepsp), main = "Heatmap plot")
   plot(linepsp, add=TRUE)
 }
 #kd_heatmap(ec.trj)
@@ -200,7 +200,7 @@ density_heatmap <- function(trajectories, value, resolution){
   rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
   rast_points <- as_Spatial(rast_points)
   rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
-  plot(density(rast_points, at="pixels", weights = rast_points$marks))
+  plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
   plot(rast_points, add=TRUE)
 }
 
@@ -212,7 +212,7 @@ density_heatmap <- function(trajectories, value, resolution){
 traj_quadrat <- function(trajectories){
   spdf <- as_Spatial(trajectories)
   spdf.ppp <- maptools::as.ppp.SpatialPointsDataFrame(spdf)
-  plot(intensity(quadratcount(spdf.ppp), image=TRUE))
+  plot(intensity(quadratcount(spdf.ppp), image=TRUE), main = "Quadrat plot")
   plot(trajectories$geometry, add=TRUE)
 }
 

@@ -20,7 +20,7 @@ plot.sfTracks <- function(x, y, ...){
     for(i in 1:length(x@tracks)){
       p <- p + geom_sf(data = x@tracks[[i]]@line, aes(color = x@tracks[[!!i]]@id[[1]]))
     }
-    p + labs(color = "Track ID")
+    p + labs(color = "Track ID") + ggtitle("Trajectories plot")
   }
   else{
     p <- ggplot()
@@ -28,7 +28,7 @@ plot.sfTracks <- function(x, y, ...){
       p <- p + geom_sf(data = x@tracks[[i]]@geometry, aes(color = x@tracks[[!!i]]@data[[y]]))
     }
     p + scale_color_viridis_c() +
-      labs(color = y)
+      labs(color = y) + ggtitle("Trajectories plot")
   }
 }
 
