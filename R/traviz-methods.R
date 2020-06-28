@@ -286,3 +286,16 @@ df_to_sfTracks <- function(df){
   }
   return(sfTracks(nest_ls))
 }
+
+#' Polygonal raster pattern analysis
+#'
+#' @param df trajectories data frame in sf format
+#' @param value value to make raster poly
+#' @param res resolution
+#' @return returns polygon dataframe
+ppa_polygons <- function(df, value, res){
+  poly_points <- rasterToPolygons(sf_to_rasterize(df, value, res))
+  poly_points <- st_as_sf(poly_points)
+
+  return(poly_points)
+}
