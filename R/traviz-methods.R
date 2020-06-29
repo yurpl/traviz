@@ -299,3 +299,19 @@ ppa_polygons <- function(df, value, res){
 
   return(poly_points)
 }
+
+#' Getis-ord hotspot analysis
+#'
+#' @param poly_points polygon points from ppa_polygons function
+#' @return heatmap
+
+gi_hotspot<- function(poly_points){
+  library(spdep)
+  G <- localG(x = poly_points$layer, listw = nb2listw(poly2nb(poly_points), zero.policy = TRUE))
+  poly_points$g <- as.numeric(G)
+  ggplot(poly_points) +
+    geom_sf(aes(fill = g)) +
+    scale_fill_viridis_c(option = "magma", name = "Gi* Statistic") +
+    theme_void() +
+    ggtitle("Getis-Ord Analysis")
+  }
