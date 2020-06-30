@@ -174,7 +174,7 @@ find_intersections_density <- function(df, resolution){
     df <- as(df, "data.frame")
     df <- st_as_sf(df)
   }
-  intersections <-st_intersection(df) %>% st_cast("POINT")
+  intersections <-sf::st_intersection(df) %>% st_cast("POINT")
   return(rasterize(intersections, raster(intersections, res=resolution), intersections$n.overlaps))
 }
 
@@ -362,5 +362,12 @@ gi_hotspot<- function(poly_points){
     geom_sf(aes(fill = g)) +
     scale_fill_viridis_c(option = "magma", name = "Gi* Statistic") +
     theme_void() +
-    ggtitle("Getis-Ord Analysis")
+    ggtitle("Getis-Ord Point Analysis")
   }
+
+#' Find similar points and time stamps
+#'
+#' @param df
+#' @param from
+#' @param to
+#' @return similar points
