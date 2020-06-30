@@ -64,15 +64,20 @@ raster_track <- function(track, value, resolution){
 
 #' sf trajectory data frame to raster with selected properties to rasterize
 #'
-#' @param df Trajectory data frame in sf format to rasterize
+#' @param df Trajectory data frame in sf format to rasterize or sfTrack or sfTracks
 #' @param data Data values wanted to rasterize
 #' @param resolution Level of resolution
 #' @param from Optional parameter from in as.POSIXct format to aggregate data from
 #' @param to Optional parameter to in as.POSIXct format to aggregate to
 #' @return rasterized object
 sf_to_rasterize <- function(df, data, resolution, from, to){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
   if(missing(from) && missing(to)){
     df <- df %>% filter(!is.na(.data[[data]]))
+    st_crs(df) <- 4326
     r <- rasterize(df, raster(df, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution), df[[data]])
     crs(r) <- "+proj=longlat +datum=WGS84"
     return(r)
