@@ -119,7 +119,7 @@ aggregate_raster_region <- function(raster, xmin = NULL, xmax = NULL, ymin = NUL
 
 #' Aggregate sf data frame to region of interest
 #'
-#' @param df sf data frame of trajectories with geometry column
+#' @param df sf data frame of trajectories with geometry column or sfTrack or sfTracks
 #' @param xmin min x
 #' @param xmax max x
 #' @param ymin min y
@@ -127,6 +127,10 @@ aggregate_raster_region <- function(raster, xmin = NULL, xmax = NULL, ymin = NUL
 #' @return Aggregated data frame
 
 aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL) {
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
   bb <- st_bbox(df)
   if (!is.null(xmin)) bb["xmin"] <- xmin
   if (!is.null(xmax)) bb["xmax"] <- xmax
@@ -137,13 +141,17 @@ aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = N
 
 #' Interpolate raster using inverse distance weighted interpolation
 #'
-#' @param df data frame
+#' @param df data frame or sfTrack or sfTracks
 #' @param measurement measurement to rasterize off
 #' @param resolution desired resolution
 #' @return Interpolated raster layer
 
 #TODO: Make more elegant
 idwi_raster <- function(df, measurement, resolution){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
   df <- df %>% filter(!is.na(.data[[measurement]]))
   gs <- gstat(formula = as.formula(paste(measurement, paste(1, collapse = "+"), sep = " ~ ")), data = df)
   raster <- raster(df, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution)
@@ -157,23 +165,31 @@ idwi_raster <- function(df, measurement, resolution){
 
 #' Find density of intersections by returning raster layer of intersections
 #'
-#' @param df sf data frame
+#' @param df sf data frame or sfTrack or sfTracks
 #' @param resolution desired resolution
 #' @return rasterized intersections
 
 find_intersections_density <- function(df, resolution){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
   intersections <-st_intersection(df) %>% st_cast("POINT")
   return(rasterize(intersections, raster(intersections, res=resolution), intersections$n.overlaps))
 }
 
 #' Cluster trajectories
 #'
-#' @param trajectories trajectories data frame in sf format
+#' @param trajectories trajectories data frame in sf format or sfTrack or sfTracks
 #' @param num_clusters desired number of clusters
 #' @return Returns clustered trajectories data frame
 
-cluster_traj <- function(trajectories, num_clusters){
-  trajectories <- st_transform(trajectories, crs = "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+cluster_traj <- function(df, num_clusters){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
+  df <- st_transform(df, crs = "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
   clusters <- hclust(as.dist(sf::st_distance(trajectories, which = "Frechet")))
   trajectories$cluster = as.factor(cutree(clusters, num_clusters))
   return((trajectories[,"cluster"]))
@@ -181,11 +197,15 @@ cluster_traj <- function(trajectories, num_clusters){
 
 #' Plot kernel density heat map of trajectories
 #'
-#' @param trajectories trajectories dataframe
+#' @param df trajectories dataframe or sfTrack or sfTracks
 #' @return kernel density heatmap
 #'
-traj_heatmap <- function(trajectories){
-  lines <- as_Spatial(trajectories$geometry)
+traj_heatmap <- function(df){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
+  lines <- as_Spatial(df$geometry)
   lines <- spTransform(lines, CRS("+proj=utm +zone=15 +ellps=WGS84"))
   linepsp <-maptools::as.psp.SpatialLines(lines, as.owin(st_bbox(lines)))
   plot(density(linepsp), main = "Heatmap plot")
@@ -194,13 +214,17 @@ traj_heatmap <- function(trajectories){
 #kd_heatmap(ec.trj)
 
 #' Plot kernel density heat map of trajectory measurements
-#' @param trajectories trajectories data frame
+#' @param df trajectories data frame or sfTrack or sfTracks
 #' @param value value desired to make heat map off
 #' @param resolution desired resolution
 #' @return plot of density heat map
 
-density_heatmap <- function(trajectories, value, resolution){
-  test_rast <- sf_to_rasterize(trajectories, value, resolution)
+density_heatmap <- function(df, value, resolution){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
+  test_rast <- sf_to_rasterize(df, value, resolution)
   rast_points <- data.frame(rasterToPoints(test_rast))
   rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
   rast_points <- as_Spatial(rast_points)
@@ -212,13 +236,17 @@ density_heatmap <- function(trajectories, value, resolution){
 
 
 #' Plot quadrat intensity of points of a trajectory
-#' @param trajectories sf trajectories data frame
+#' @param df sf trajectories data frame
 #' @return plot of density heat map
-traj_quadrat <- function(trajectories){
-  spdf <- as_Spatial(trajectories)
+traj_quadrat <- function(df){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
+  spdf <- as_Spatial(df)
   spdf.ppp <- maptools::as.ppp.SpatialPointsDataFrame(spdf)
   plot(intensity(quadratcount(spdf.ppp), image=TRUE), main = "Quadrat plot")
-  plot(trajectories$geometry, add=TRUE)
+  plot(df$geometry, add=TRUE)
 }
 
 
@@ -227,6 +255,10 @@ traj_quadrat <- function(trajectories){
 #' @return space time cube
 
 sfcube <- function(df){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
   anglr::plot3d(df)
 }
 
@@ -236,10 +268,14 @@ sfcube <- function(df){
 #' @param value value to base scale off
 #' @return ggplot2 of trajectories
 
-plot_traj <- function(trajectories, value){
+plot_traj <- function(df, value){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
   p <- ggplot() +
     geom_sf() +
-    geom_sf(data = trajectories, aes(color = .data[[value]]))+
+    geom_sf(data = df, aes(color = .data[[value]]))+
     scale_color_gradient(low = "yellow", high = "red", na.value = NA)
   p
 }
@@ -267,6 +303,10 @@ sfc_as_cols <- function(x, names = c("x","y")) {
 #' @return animation of trajectory in GIF
 
 animate_single_track <- function(trajectory, res, filename = "trajectory.gif", unit = "min"){
+  if(is(trajectory, 'sfTrack')){
+    trajectory <- as(trajectory, "data.frame")
+    trajectory <- st_as_sf(trajectory)
+  }
   trajectory <- sfc_as_cols(trajectory)
   move <- df2move(trajectory, proj ="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", x='x', y='y', time='time' )
   m <- align_move(move, res = res, unit = unit)
@@ -299,6 +339,10 @@ df_to_sfTracks <- function(df){
 #' @param res resolution
 #' @return returns polygon dataframe
 ppa_polygons <- function(df, value, res){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
   poly_points <- rasterToPolygons(sf_to_rasterize(df, value, res))
   poly_points <- st_as_sf(poly_points)
 
