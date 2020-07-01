@@ -145,7 +145,7 @@ aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = N
 #' @param from from time in POSIXct
 #' @param to to time in POSIXct
 #' @return data frame
-aggretate_sf_time <- function(df, from, to){
+aggregate_sf_time <- function(df, from, to){
   library(tibbletime)
   if(is(df, 'sfTracks') || is(df, 'sfTrack')){
     df <- as(df, "data.frame")
