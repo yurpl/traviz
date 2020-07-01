@@ -36,4 +36,3 @@ sfTracks = function(tracks){
   new("sfTracks", tracks = tracks)
 }
 
-

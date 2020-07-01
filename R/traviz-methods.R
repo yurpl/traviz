@@ -139,29 +139,6 @@ aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = N
   st_filter(df, st_as_sfc(bb), .predicate = st_within)
 }
 
-#' Aggregate sf to time of interest
-#'
-#' @param df sf data frame or sfTrack
-#' @param from from time in POSIXct
-#' @param to to time in POSIXct
-#' @return data frame
-aggregate_sf_time <- function(df, from, to){
-  library(tibbletime)
-  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
-    df <- as(df, "data.frame")
-    df <- st_as_sf(df)
-    df <- df %>%
-      as_tbl_time(index = time) %>%
-      filter_time(from ~ to)
-    if(is(df, 'sfTrack')){
-      return(sfTrack(df))
-    }
-    else{
-      return(df_to_sfTracks(df))
-    }
-  }
-}
-
 #' Interpolate raster using inverse distance weighted interpolation
 #'
 #' @param df data frame or sfTrack or sfTracks
@@ -405,4 +382,24 @@ similar <- function(df, from, to){
     group_by(track.id)
 
   return(df)
+}
+
+#' Aggregate sfTrack by time
+#'
+#' @param sftrack sfTrack
+#' @param from from in posixct format
+#' @param to to in posxict format
+#' @return Returns aggregated sfTrack
+
+aggregate_sft_time <- function(sftrack, from, to){
+  if(from < min(sftrack@time) | to > max(sftrack@time)){
+    warning("Time period nonexistant in track")
+  }
+  library(tibbletime)
+  df <- as(sftrack, "data.frame")
+  df <- st_as_sf(df)
+  df <- df %>%
+    as_tbl_time(index = time) %>%
+    filter_time(from ~ to)
+  return(sfTrack(df, "track.id"))
 }
