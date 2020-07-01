@@ -365,24 +365,6 @@ gi_hotspot<- function(poly_points){
     ggtitle("Getis-Ord Point Analysis")
   }
 
-#' Find similar trajectories in a segment
-#'
-#' @param df
-#' @param from
-#' @param to
-#' @return similar points
-
-similar <- function(df, from, to){
-  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
-    df <- as(df, "data.frame")
-    df <- st_as_sf(df)
-  }
-  df <- df %>%
-    filter(time >= from & time <= to) %>%
-    group_by(track.id)
-
-  return(df)
-}
 
 #' Aggregate sfTrack by time
 #'
