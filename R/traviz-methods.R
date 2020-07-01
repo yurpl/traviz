@@ -185,12 +185,8 @@ find_intersections_density <- function(df, resolution){
 #' @return Returns clustered trajectories data frame
 
 cluster_traj <- function(df, num_clusters){
-  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
-    df <- as(df, "data.frame")
-    df <- st_as_sf(df)
-  }
   df <- st_transform(df, crs = "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
-  clusters <- hclust(as.dist(sf::st_distance(trajectories, which = "Frechet")))
+  clusters <- hclust(as.dist(st_distance(trajectories, which = "Frechet")))
   trajectories$cluster = as.factor(cutree(clusters, num_clusters))
   return((trajectories[,"cluster"]))
 }
@@ -386,9 +382,3 @@ aggregate_sft_time <- function(sftrack, from, to){
   return(sfTrack(df, "track.id"))
 }
 
-#' Aggregate sfTracks by time
-#'
-#' @param sftc sfTracks list
-#' @param from
-#' @param to
-#' @return aggregated sfTracks
