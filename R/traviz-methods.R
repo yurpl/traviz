@@ -385,3 +385,10 @@ aggregate_sft_time <- function(sftrack, from, to){
     filter_time(from ~ to)
   return(sfTrack(df, "track.id"))
 }
+
+#' Aggregate sfTracks by time
+#'
+#' @param sftc sfTracks list
+#' @param from
+#' @param to
+#' @return aggregated sfTracks
