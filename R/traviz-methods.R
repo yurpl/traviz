@@ -150,15 +150,17 @@ aggretate_sf_time <- function(df, from, to){
   if(is(df, 'sfTracks') || is(df, 'sfTrack')){
     df <- as(df, "data.frame")
     df <- st_as_sf(df)
+    df <- df %>%
+      as_tbl_time(index = time) %>%
+      filter_time(from ~ to)
+    if(is(df, 'sfTrack')){
+      return(sfTrack(df))
+    }
+    else{
+      return(df_to_sfTracks(df))
+    }
   }
-  df <- df %>%
-    as_tbl_time(index = time) %>%
-    filter_time(from ~ to)
-  df <- st_as_sf(df)
-  return(df)
-
 }
-
 
 #' Interpolate raster using inverse distance weighted interpolation
 #'

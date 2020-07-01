@@ -17,7 +17,7 @@ setClass("sfTrack",
 
 sfTrack = function(df, identifier){
   if(!is(df, "sf")){
-    df <- geodata_to_sf(df)
+    df <- geodata_to_sf(df, identifier)
   }
   df.un <- df %>% unnest
   df.un$geometry <- df.un$geometry %>% st_set_crs(4326)

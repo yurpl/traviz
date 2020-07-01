@@ -91,7 +91,11 @@ setAs("sfTrack", "Track",
 
 #Coerce to data frame
 setAs("sfTrack", "data.frame",
-      function(from) as(from@data, "data.frame")
+      function(from){
+        df <- as(from@data, "data.frame")
+        df$track.id <- from@id
+        return(df)
+      }
 )
 
 setAs("sfTracks", "data.frame",
