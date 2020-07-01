@@ -139,6 +139,27 @@ aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = N
   st_filter(df, st_as_sfc(bb), .predicate = st_within)
 }
 
+#' Aggregate sf to time of interest
+#'
+#' @param df sf data frame or sfTrack
+#' @param from from time in POSIXct
+#' @param to to time in POSIXct
+#' @return data frame
+aggretate_sf_time <- function(df, from, to){
+  library(tibbletime)
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
+  df <- df %>%
+    as_tbl_time(index = time) %>%
+    filter_time(from ~ to)
+  df <- st_as_sf(df)
+  return(df)
+
+}
+
+
 #' Interpolate raster using inverse distance weighted interpolation
 #'
 #' @param df data frame or sfTrack or sfTracks
@@ -365,9 +386,21 @@ gi_hotspot<- function(poly_points){
     ggtitle("Getis-Ord Point Analysis")
   }
 
-#' Find similar points and time stamps
+#' Find similar trajectories in a segment
 #'
 #' @param df
 #' @param from
 #' @param to
 #' @return similar points
+
+similar <- function(df, from, to){
+  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+    df <- as(df, "data.frame")
+    df <- st_as_sf(df)
+  }
+  df <- df %>%
+    filter(time >= from & time <= to) %>%
+    group_by(track.id)
+
+  return(df)
+}
