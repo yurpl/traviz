@@ -83,9 +83,14 @@ sf_to_rasterize <- function(df, data, resolution, from, to){
     return(r)
   }
   else{
+    library(tibbletime)
     df <- df %>%
-      filter(!is.na(.data[[data]])) %>%
-      filter(time >= from & time <= to)
+      arrange(time) %>%
+      as_tbl_time(index = time) %>%
+      filter_time(from ~ to)
+    df <- data.frame(df)
+    df <- st_as_sf(df)
+
     r <- rasterize(df, raster(df, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution), df[[data]])
     crs(r) <- "+proj=longlat +datum=WGS84"
     return(r)
@@ -213,22 +218,33 @@ traj_heatmap <- function(df){
 #' @param df trajectories data frame or sfTrack or sfTracks
 #' @param value value desired to make heat map off
 #' @param resolution desired resolution
+#' @param date optional parameter to create a day heatmap with 6 plots and 4 hour intervals
 #' @return plot of density heat map
 
-density_heatmap <- function(df, value, resolution){
-  if(is(df, 'sfTracks') || is(df, 'sfTrack')){
-    df <- as(df, "data.frame")
-    df <- st_as_sf(df)
+density_heatmap <- function(df, value, resolution, date){
+  # if(is(df, 'sfTracks') || is(df, 'sfTrack')){
+  #   df <- as(df, "data.frame")
+  #   df <- st_as_sf(df)
+  # }
+  if(missing(date)){
+    test_rast <- sf_to_rasterize(df, value, resolution)
+    rast_points <- data.frame(rasterToPoints(test_rast))
+    rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+    rast_points <- as_Spatial(rast_points)
+    rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
+    plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
+    plot(rast_points, add=TRUE)
   }
-  test_rast <- sf_to_rasterize(df, value, resolution)
-  rast_points <- data.frame(rasterToPoints(test_rast))
-  rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
-  rast_points <- as_Spatial(rast_points)
-  rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
-  plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
-  plot(rast_points, add=TRUE)
+  else{
+    test_rast <- sf_to_rasterize(df, value, resolution, from = date, to = date + 4*60*60)
+    rast_points <- data.frame(rasterToPoints(test_rast))
+    rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+    rast_points <- as_Spatial(rast_points)
+    rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
+    plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
+    plot(rast_points, add=TRUE)
+  }
 }
-
 
 
 #' Plot quadrat intensity of points of a trajectory
@@ -382,3 +398,8 @@ aggregate_sft_time <- function(sftrack, from, to){
   return(sfTrack(df, "track.id"))
 }
 
+#' Create value vs density diagram
+#'
+#' @param trajectories
+#' @param values
+#' @return value vs density plot
