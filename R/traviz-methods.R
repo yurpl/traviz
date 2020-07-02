@@ -180,15 +180,15 @@ find_intersections_density <- function(df, resolution){
 
 #' Cluster trajectories
 #'
-#' @param trajectories trajectories data frame in sf format or sfTrack or sfTracks
+#' @param df trajectories data frame in sf format or sfTrack or sfTracks
 #' @param num_clusters desired number of clusters
 #' @return Returns clustered trajectories data frame
 
 cluster_traj <- function(df, num_clusters){
   df <- st_transform(df, crs = "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
-  clusters <- hclust(as.dist(st_distance(trajectories, which = "Frechet")))
-  trajectories$cluster = as.factor(cutree(clusters, num_clusters))
-  return((trajectories[,"cluster"]))
+  clusters <- hclust(as.dist(st_distance(df, which = "Frechet")))
+  df$cluster = as.factor(cutree(clusters, num_clusters))
+  return((df[,"cluster"]))
 }
 
 #' Plot kernel density heat map of trajectories
