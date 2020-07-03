@@ -88,7 +88,6 @@ sf_to_rasterize <- function(df, data, resolution, from, to){
       arrange(time) %>%
       as_tbl_time(index = time) %>%
       filter_time(from ~ to)
-    df <- data.frame(df)
     df <- st_as_sf(df)
 
     r <- rasterize(df, raster(df, crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84", res = resolution), df[[data]])
@@ -236,13 +235,49 @@ density_heatmap <- function(df, value, resolution, date){
     plot(rast_points, add=TRUE)
   }
   else{
+    par(mfrow=c(2,3))
     test_rast <- sf_to_rasterize(df, value, resolution, from = date, to = date + 4*60*60)
     rast_points <- data.frame(rasterToPoints(test_rast))
     rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
     rast_points <- as_Spatial(rast_points)
     rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
     plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
-    plot(rast_points, add=TRUE)
+
+    test_rast <- sf_to_rasterize(df, value, resolution, from = date + (4*60*60), to = date + (8*60*60))
+    rast_points <- data.frame(rasterToPoints(test_rast))
+    rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+    rast_points <- as_Spatial(rast_points)
+    rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
+    plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
+
+    test_rast <- sf_to_rasterize(df, value, resolution, from = date + 8*60*60, to = date + 12*60*60)
+    rast_points <- data.frame(rasterToPoints(test_rast))
+    rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+    rast_points <- as_Spatial(rast_points)
+    rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
+    plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
+
+
+    test_rast <- sf_to_rasterize(df, value, resolution, from = date + 12*60*60, to = date + 16*60*60)
+    rast_points <- data.frame(rasterToPoints(test_rast))
+    rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+    rast_points <- as_Spatial(rast_points)
+    rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
+    plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
+
+    test_rast <- sf_to_rasterize(df, value, resolution, from = date + 16*60*60, to = date + 20*60*60)
+    rast_points <- data.frame(rasterToPoints(test_rast))
+    rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+    rast_points <- as_Spatial(rast_points)
+    rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
+    plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
+
+    test_rast <- sf_to_rasterize(df, value, resolution, from = date + 20*60*60, to = date + 24*60*60)
+    rast_points <- data.frame(rasterToPoints(test_rast))
+    rast_points <- st_as_sf(rast_points, coords=c("x","y"), crs="+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
+    rast_points <- as_Spatial(rast_points)
+    rast_points <- maptools::as.ppp.SpatialPointsDataFrame(rast_points)
+    plot(density(rast_points, at="pixels", weights = rast_points$marks), main = "Heatmap plot")
   }
 }
 
