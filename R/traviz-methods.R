@@ -433,8 +433,13 @@ aggregate_sft_time <- function(sftrack, from, to){
   return(sfTrack(df, "track.id"))
 }
 
-#' Create value vs density diagram
+#' Aggregate dataframe by day (i.e. all trajectories on Monday)
 #'
-#' @param trajectories
-#' @param values
-#' @return value vs density plot
+#' @param traj trajectory df
+#' @param day day to aggregate by (1 = Sunday, 2 = Monday, ... , 7 = Saturday)
+#' @return aggregated data frame
+
+aggregate_day <- function(traj, day){
+  library(lubridate)
+  return(traj[which(wday(traj$time) == day), ])
+}
