@@ -443,3 +443,26 @@ aggregate_day <- function(traj, day){
   library(lubridate)
   return(traj[which(wday(traj$time) == day), ])
 }
+
+#' Visualize density in region of interest by day of week
+#'
+#' @param df trajectories data frame
+#' @param day day (1 = Sunday, 2 = Monday, ... , 7 = Saturday)
+#' @param xmin min x
+#' @param xmax max x
+#' @param ymin min y
+#' @param ymax max y
+#' @return plot of aggregated values
+
+plot_day_density <- function(df, xmin, xmax, ymin, ymax){
+  if (!missing(xmin) && !missing(xmax) && !missing(ymin) && !missing(ymax)) {df <- aggregate_sf_roi(df, xmin, xmax, ymin, ymax)}
+
+  df <- sfc_as_cols(df)
+  df$weekday = weekdays(as.Date(df$time, format="%m/%d/%Y"))
+  df$weekday = factor(df$weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
+  df <-df[order(df$weekday),]
+
+  p <- ggplot(df) + geom_sf() + stat_density2d(data = df, aes(x,y, fill = ..level.., alpha=..level..), size = 1, bins = 20, alpha=0.25,  geom = "polygon") + scale_fill_gradient(low="blue", high = "orange")+ facet_wrap(~weekday)
+  return(p)
+
+}
