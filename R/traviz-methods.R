@@ -446,7 +446,7 @@ aggregate_day <- function(traj, day){
 }
 
 #' Visualize density in region of interest by day of week
-#'
+#' @import lubridate
 #' @param df trajectories data frame
 #' @param xmin min x
 #' @param xmax max x
@@ -462,13 +462,13 @@ plot_day_density <- function(df, xmin, xmax, ymin, ymax){
   df$weekday = factor(df$weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
   df <-df[order(df$weekday),]
 
-  p <- ggplot(df) + geom_sf() + stat_density2d(data = df, aes(x,y, fill = ..level.., alpha=..level..), size = 1, bins = 20, alpha=0.25,  geom = "polygon") + scale_fill_gradient(low="blue", high = "orange")+ facet_wrap(~weekday)
+  p <- ggplot(df) + geom_sf() + stat_density2d(data = df, aes(x,y, fill = ..level.., alpha=..level..), size = 1, bins = 20, alpha=0.25,  geom = "polygon") + scale_fill_gradient(low="blue", high = "orange")+ facet_wrap(~weekday)  + ggtitle("Aggregation by weekday")
   return(p)
 
 }
 
 #' Visualize density in region of interest by time of day
-#'
+#' @import lubridate
 #' @param df trajectories data frame
 #' @param xmin min x
 #' @param xmax max x
@@ -482,8 +482,58 @@ plot_hour_density <- function(df, xmin, xmax, ymin, ymax){
   df <- sfc_as_cols(df)
   df$time <- hour(df$time)
 
-  p <- ggplot(df) + geom_sf() + stat_density2d(data = df, aes(x,y, fill = ..level.., alpha=..level..), size = 1, bins = 20, alpha=0.25,  geom = "polygon") + scale_fill_gradient(low="blue", high = "orange")+ facet_wrap(~time)
+  p <- ggplot(df) + geom_sf() + stat_density2d(data = df, aes(x,y, fill = ..level.., alpha=..level..), size = 1, bins = 20, alpha=0.25,  geom = "polygon") + scale_fill_gradient(low="blue", high = "orange")+ facet_wrap(~time) + ggtitle("Aggregation by hour")
   return(p)
 
+}
+
+#' Plot values by weekday
+#' @import lubridate
+#' @param df trajectories data frame
+#' @param xmin min x
+#' @param xmax max x
+#' @param ymin min y
+#' @param ymax max y
+#' @return plot of aggregated values
+
+plot_day <- function(df, value, xmin, xmax, ymin, ymax){
+  if (!missing(xmin) && !missing(xmax) && !missing(ymin) && !missing(ymax)) {df <- aggregate_sf_roi(df, xmin, xmax, ymin, ymax)}
+
+  df$weekday = weekdays(as.Date(df$time, format="%m/%d/%Y"))
+  df$weekday = factor(df$weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
+  df <-df[order(df$weekday),]
+
+  if(missing(value)){
+    p <- ggplot(df) + geom_sf() + scale_fill_gradient(low="blue", high = "orange")+ facet_wrap(~weekday) + ggtitle("Aggregation by weekday")
+    return(p)
+  }
+  else{
+    p <- ggplot(df) + geom_sf(data = df, aes(color = .data[[value]]))+ scale_color_gradient(low = "yellow", high = "red", na.value = NA) + facet_wrap(~weekday) + ggtitle("Aggregation by weekday")
+    return(p)
+  }
+}
+
+#' Plot values by hour
+#' @import lubridate
+#' @param df trajectories data frame
+#' @param xmin min x
+#' @param xmax max x
+#' @param ymin min y
+#' @param ymax max y
+#' @return plot of aggregated values
+
+plot_hour <- function(df, value, xmin, xmax, ymin, ymax){
+  if (!missing(xmin) && !missing(xmax) && !missing(ymin) && !missing(ymax)) {df <- aggregate_sf_roi(df, xmin, xmax, ymin, ymax)}
+
+  df$time <- hour(df$time)
+
+  if(missing(value)){
+    p <- ggplot(df) + geom_sf() + facet_wrap(~time) + ggtitle("Aggregation by hour")
+    return(p)
+  }
+  else{
+    p <- ggplot(df) + geom_sf(aes(color = .data[[value]]))+ scale_color_gradient(low = "yellow", high = "red") + facet_wrap(~time) + ggtitle("Aggregation by hour")
+    return(p)
+  }
 }
 
