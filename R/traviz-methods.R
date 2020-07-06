@@ -402,6 +402,7 @@ ppa_polygons <- function(df, value, res){
 #' @return heatmap
 
 gi_hotspot<- function(poly_points){
+  if(class(poly_points) != "sfc_POLYGON") {warning("Function requires pologyon points. Use ppa_polygons function")}
   library(spdep)
   G <- localG(x = poly_points$layer, listw = nb2listw(poly2nb(poly_points), zero.policy = TRUE))
   poly_points$g <- as.numeric(G)
@@ -485,3 +486,4 @@ plot_hour_density <- function(df, xmin, xmax, ymin, ymax){
   return(p)
 
 }
+
