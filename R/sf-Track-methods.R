@@ -142,8 +142,8 @@ pv_stcube.sfTrack <- function(x, value, ...){
                             xlim = c(st_bbox(x@geometry)[1], st_bbox(x@geometry)[3]),
                             ylim = c(st_bbox(x@geometry)[2], st_bbox(x@geometry)[4]),
                             colvar = x@data$value,
-                            clab = value,
                             ticktype = "detailed",
+                            clab = value,
                             xlab = "x", ylab = "y", zlab ="t")
   }
 
