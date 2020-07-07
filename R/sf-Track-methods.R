@@ -136,13 +136,21 @@ pv_stcube.sfTrack <- function(x, value, ...){
   time = index(x@time)
   time <- time - min(time)
   if(!missing(value)){
-    cols <- colorRampPalette(c('red','yellow', 'green'))
-    cols = cols(10)[as.numeric(cut(x@data[[value]], breaks = 10))]
-    rgl::plot3d(x = coords[, 1], y = coords[, 2], z = time, xlab = "x", ylab = "y", zlab = "t", type = "l", col = cols)
+    # cols <- colorRampPalette(c('red','yellow', 'green'))
+    # cols = cols(10)[as.numeric(cut(x@data[[value]], breaks = 10))]
+    plot3Drgl::plotrgl(x = st_coordinates(x@geometry)[,1], y = st_coordinates(x@geometry)[, 2], z = time,
+                            xlim = c(st_bbox(x@geometry)[1], st_bbox(x@geometry)[3]),
+                            ylim = c(st_bbox(x@geometry)[2], st_bbox(x@geometry)[4]),
+                            colvar = x@data$value,
+                            clab = value,
+                            ticktype = "detailed",
+                            xlab = "x", ylab = "y", zlab ="t")
   }
 
   else{
-    rgl::plot3d(x = coords[, 1], y = coords[, 2], z = time, xlab = "x", ylab = "y", zlab = "t", type = "l")
+    plot3Drgl::scatter3Drgl(x = coords[, 1], y = coords[, 2], z = time, xlab = "x", ylab = "y", zlab = "t",
+                            ticktype = "detailed",
+                            clab = "Time")
   }
 }
 
