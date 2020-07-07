@@ -128,31 +128,35 @@ sft_length <- function(sft){
 }
 setMethod("sft_length", "sfTrack", sft_length)
 
-setGeneric("pv_stcube", function(x, ...)
-  standardGeneric("pv_stcube"))
+if(!isGeneric("pv_stcube"))
+  setGeneric("pv_stcube", function(x, ...)
+    standardGeneric("pv_stcube"))
+
 
 pv_stcube.sfTrack <- function(x, value, ...){
   coords = sf::st_coordinates(x@geometry)
   time = index(x@time)
   time <- time - min(time)
-  if(!missing(value)){
-    # cols <- colorRampPalette(c('red','yellow', 'green'))
-    # cols = cols(10)[as.numeric(cut(x@data[[value]], breaks = 10))]
-    plot3Drgl::plotrgl(x = st_coordinates(x@geometry)[,1], y = st_coordinates(x@geometry)[, 2], z = time,
+  if(missing(value)){
+    plot3Drgl::scatter3Drgl(x = coords[, 1], y = coords[, 2], z = time, xlab = "x", ylab = "y", zlab = "t",
+                            ticktype = "detailed",
+                            clab = "Time")
+  }
+
+  else{
+    plot3Drgl::scatter3Drgl(x = st_coordinates(x@geometry)[,1], y = st_coordinates(x@geometry)[,2], z = time,
                             xlim = c(st_bbox(x@geometry)[1], st_bbox(x@geometry)[3]),
                             ylim = c(st_bbox(x@geometry)[2], st_bbox(x@geometry)[4]),
-                            colvar = x@data$value,
+                            colvar = x@data[[value]],
                             ticktype = "detailed",
                             clab = value,
                             xlab = "x", ylab = "y", zlab ="t")
   }
 
-  else{
-    plot3Drgl::scatter3Drgl(x = coords[, 1], y = coords[, 2], z = time, xlab = "x", ylab = "y", zlab = "t",
-                            ticktype = "detailed",
-                            clab = "Time")
-  }
 }
 
 setMethod("pv_stcube", "sfTrack", pv_stcube.sfTrack)
+
+
+
 
