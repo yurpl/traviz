@@ -128,4 +128,23 @@ sft_length <- function(sft){
 }
 setMethod("sft_length", "sfTrack", sft_length)
 
+setGeneric("pv_stcube", function(x, ...)
+  standardGeneric("pv_stcube"))
+
+pv_stcube.sfTrack <- function(x, value, ...){
+  coords = sf::st_coordinates(x@geometry)
+  time = index(x@time)
+  time <- time - min(time)
+  if(!missing(value)){
+    cols <- colorRampPalette(c('red','yellow', 'green'))
+    cols = cols(10)[as.numeric(cut(x@data[[value]], breaks = 10))]
+    rgl::plot3d(x = coords[, 1], y = coords[, 2], z = time, xlab = "x", ylab = "y", zlab = "t", type = "l", col = cols)
+  }
+
+  else{
+    rgl::plot3d(x = coords[, 1], y = coords[, 2], z = time, xlab = "x", ylab = "y", zlab = "t", type = "l")
+  }
+}
+
+setMethod("pv_stcube", "sfTrack", pv_stcube.sfTrack)
 
