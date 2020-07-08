@@ -6,6 +6,23 @@ transform.sfTrack <- function(x, crs = ""){
 
 setMethod("transform.sfTrack", "sfTrack", transform.sfTrack)
 
+setGeneric("sft_coordinates", function(sft, ...)
+  standardGeneric("sft_coordinates"))
+
+sft_coordinates.sfTrack <- function(sft) {return(as.data.frame(sf::st_coordinates(sft@geometry)))}
+
+setMethod("sft_coordinates", "sfTrack", sft_coordinates.sfTrack)
+
+setGeneric("sfts_coordinates", function(sfts, ...)
+  standardGeneric("sfts_coordinates"))
+
+sfts_coordinates.sfTracks <- function(sfts) {
+  return(do.call(rbind, lapply(sfts@tracks,
+                        function(x) sft_coordinates.sfTrack(x))))
+}
+setMethod("sfts_coordinates", "sfTracks", sfts_coordinates.sfTracks)
+
+
 setGeneric(
   name = "intersection",
   def = function(sft1, sft2, ...) standardGeneric("intersection")
@@ -161,7 +178,16 @@ map3d = function(map, z, ...) {
   rgl::surface3d(x = xc, y = yc, z = m, col = col, lit = FALSE, ...)
 }
 
+normalize = function(time, by = "week") {
+  tn = as.numeric(time)
 
+  switch(by,
+         minute = (tn %% 60),
+         hour = (tn %% 3600) / 60 , # decimal minute of the hour
+         day = (tn %% (3600 * 24)) / 3600, # decimal hour of the day
+         week = (tn %% (3600 * 24 * 7)) / 24 / 3600, # decimal day of the week
+         stop(paste("unknown value for by: ", by)))
+}
 
 if(!isGeneric("pv_stcube"))
   setGeneric("pv_stcube", function(x, ...)
@@ -198,3 +224,7 @@ pv_stcube.sfTrack <- function(x, value, map=FALSE, ...){
 }
 
 setMethod("pv_stcube", "sfTrack", pv_stcube.sfTrack)
+
+pv_stcube.sfTracks <- function(x, value, map=FALSE, ...){
+
+}
