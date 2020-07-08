@@ -223,7 +223,7 @@ pv_stcube.sfTrack <- function(x, value, map=FALSE, ...){
 
 setMethod("pv_stcube", "sfTrack", pv_stcube.sfTrack)
 
-pv_stcube.sfTracks <- function(x, value=NULL, map=FALSE, normalizeBy = "week", xlab='x', ylab='y', zlab='z', ...){
+pv_stcube.sfTracks <- function(x, value, map=FALSE, normalizeBy = "week", xlab='x', ylab='y', zlab='z', ...){
 
   xlim = c(st_bbox(x@tracks[[1]]@geometry)[[1]], st_bbox(st_bbox(x@tracks[[1]]@geometry))[[3]])
   ylim = c(st_bbox(x@tracks[[1]]@geometry)[[2]], st_bbox(x@tracks[[1]]@geometry)[[4]])
@@ -234,15 +234,30 @@ pv_stcube.sfTracks <- function(x, value=NULL, map=FALSE, normalizeBy = "week", x
                                         function(x) index(x@time))), normalizeBy)
   zlim = range(timeAll)
   col = rainbow(length(x@tracks))
-  rgl::plot3d(x = coordsAll[1:dim, 1], y = coordsAll[1:dim, 2],
-              z = timeAll[1:dim], col=col[1], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, zlab=zlab)
 
-  tracks = x@tracks[-1]
-  for(t in seq_along(tracks)) {
-    coords = sf::st_coordinates(tracks[[t]]@geometry)
-    time = normalize(index(tracks[[t]]@time), normalizeBy)
-    rgl::lines3d(x = coords[, 1], y = coords[, 2], z = time, col = col[t+1])
+  if(missing(value)){
+    rgl::plot3d(x = coordsAll[1:dim, 1], y = coordsAll[1:dim, 2],
+                z = timeAll[1:dim], col=col[1], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, zlab=zlab)
+
+    tracks = x@tracks[-1]
+    for(t in seq_along(tracks)) {
+      coords = sf::st_coordinates(tracks[[t]]@geometry)
+      time = normalize(index(tracks[[t]]@time), normalizeBy)
+      rgl::lines3d(x = coords[, 1], y = coords[, 2], z = time, col = col[t+1])
+    }
   }
+  else{
+    rgl::plot3d(x = coordsAll[1:dim, 1], y = coordsAll[1:dim, 2],
+                z = timeAll[1:dim], col=col[1], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, zlab=zlab, plot=FALSE)
+
+    tracks = x@tracks
+    for(t in seq_along(tracks)) {
+      coords = sf::st_coordinates(tracks[[t]]@geometry)
+      time = normalize(index(tracks[[t]]@time), normalizeBy)
+      plot3Drgl::scatter3Drgl(x = coords[, 1], y = coords[, 2], z = time, colvar = tracks[[t]]@data[[value]], add=TRUE)
+    }
+  }
+
   if(map){
     maplimx = xlim + c(-0.1,0.1) * diff(xlim)
     maplimy = ylim + c(-0.1,0.1) * diff(ylim)
@@ -252,3 +267,4 @@ pv_stcube.sfTracks <- function(x, value=NULL, map=FALSE, normalizeBy = "week", x
 }
 
 setMethod("pv_stcube", "sfTracks", pv_stcube.sfTracks)
+
