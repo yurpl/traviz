@@ -128,35 +128,73 @@ sft_length <- function(sft){
 }
 setMethod("sft_length", "sfTrack", sft_length)
 
+#Functions for OSM and 3d map support from trajectories package
+#Authors: Benedikt Graeler and Edzer Pebesma
+OSM = function(xlim, ylim, mapZoom, mapType, projection) {
+  if (!requireNamespace("OpenStreetMap", quietly = TRUE))
+    stop("package OpenStreetMap required")
+  bboxSp <- SpatialPoints(rbind(c(xlim[1], ylim[2]),
+                                c(xlim[2], ylim[1])))
+  bboxSp@proj4string <- CRS(projection)
+  bboxSp <- spTransform(bboxSp, CRS("+init=epsg:4326"))
+  map = OpenStreetMap::openmap(upperLeft = bboxSp@coords[1,2:1],
+                               lowerRight = bboxSp@coords[2,2:1], zoom = mapZoom, type = mapType)
+  OpenStreetMap::openproj(x = map, projection = projection)
+}
+
+map3d = function(map, z, ...) {
+  if (!requireNamespace("rgl", quietly = TRUE))
+    stop("rgl required")
+  if(length(map$tiles) != 1)
+    stop("Pass single map tile only.")
+  nx = map$tiles[[1]]$xres
+  ny = map$tiles[[1]]$yres
+  xmin = map$tiles[[1]]$bbox$p1[1]
+  xmax = map$tiles[[1]]$bbox$p2[1]
+  ymin = map$tiles[[1]]$bbox$p1[2]
+  ymax = map$tiles[[1]]$bbox$p2[2]
+  xc = seq(xmin, xmax, len = ny)
+  yc = seq(ymin, ymax, len = nx)
+  col = matrix(data = map$tiles[[1]]$colorData, nrow = ny, ncol = nx)
+  m = matrix(data = z, nrow = ny, ncol = nx)
+
+  rgl::surface3d(x = xc, y = yc, z = m, col = col, lit = FALSE, ...)
+}
+
+
+
 if(!isGeneric("pv_stcube"))
   setGeneric("pv_stcube", function(x, ...)
     standardGeneric("pv_stcube"))
 
-
-pv_stcube.sfTrack <- function(x, value, ...){
+pv_stcube.sfTrack <- function(x, value, map=FALSE, ...){
   coords = sf::st_coordinates(x@geometry)
+  xlim = c(st_bbox(x@geometry)[[1]], st_bbox(x@geometry)[[3]])
+  ylim = c(st_bbox(x@geometry)[[2]], st_bbox(x@geometry)[[4]])
   time = index(x@time)
   time <- time - min(time)
   if(missing(value)){
     plot3Drgl::scatter3Drgl(x = coords[, 1], y = coords[, 2], z = time, xlab = "x", ylab = "y", zlab = "t",
                             ticktype = "detailed",
                             clab = "Time")
+
   }
 
   else{
     plot3Drgl::scatter3Drgl(x = st_coordinates(x@geometry)[,1], y = st_coordinates(x@geometry)[,2], z = time,
-                            xlim = c(st_bbox(x@geometry)[1], st_bbox(x@geometry)[3]),
-                            ylim = c(st_bbox(x@geometry)[2], st_bbox(x@geometry)[4]),
+                            xlim = xlim,
+                            ylim = ylim,
                             colvar = x@data[[value]],
                             ticktype = "detailed",
                             clab = value,
                             xlab = "x", ylab = "y", zlab ="t")
   }
-
+  if(map){
+    maplimx = xlim + c(-0.1,0.1) * diff(xlim)
+    maplimy = ylim + c(-0.1,0.1) * diff(ylim)
+    map <- OSM(xlim = maplimx, ylim= maplimy, mapType = "osm", mapZoom = NULL, projection = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84")
+    map3d(map, z = time[1], add=T)
+  }
 }
 
 setMethod("pv_stcube", "sfTrack", pv_stcube.sfTrack)
-
-
-
-
