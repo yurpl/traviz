@@ -13,14 +13,12 @@ sft_coordinates.sfTrack <- function(sft) {return(as.data.frame(sf::st_coordinate
 
 setMethod("sft_coordinates", "sfTrack", sft_coordinates.sfTrack)
 
-setGeneric("sfts_coordinates", function(sfts, ...)
-  standardGeneric("sfts_coordinates"))
 
-sfts_coordinates.sfTracks <- function(sfts) {
-  return(do.call(rbind, lapply(sfts@tracks,
-                        function(x) sft_coordinates.sfTrack(x))))
+sft_coordinates.sfTracks <- function(sft) {
+  return(do.call(rbind, lapply(sft@tracks,
+                        function(x) sft_coordinates(x))))
 }
-setMethod("sfts_coordinates", "sfTracks", sfts_coordinates.sfTracks)
+setMethod("sft_coordinates", "sfTracks", sft_coordinates.sfTracks)
 
 
 setGeneric(
@@ -225,6 +223,32 @@ pv_stcube.sfTrack <- function(x, value, map=FALSE, ...){
 
 setMethod("pv_stcube", "sfTrack", pv_stcube.sfTrack)
 
-pv_stcube.sfTracks <- function(x, value, map=FALSE, ...){
+pv_stcube.sfTracks <- function(x, value=NULL, map=FALSE, normalizeBy = "week", xlab='x', ylab='y', zlab='z', ...){
 
+  xlim = c(st_bbox(x@tracks[[1]]@geometry)[[1]], st_bbox(st_bbox(x@tracks[[1]]@geometry))[[3]])
+  ylim = c(st_bbox(x@tracks[[1]]@geometry)[[2]], st_bbox(x@tracks[[1]]@geometry)[[4]])
+
+  dim = length(x@tracks[[1]]@geometry)
+  coordsAll = sft_coordinates(x)
+  timeAll = normalize(do.call(c, lapply(x@tracks,
+                                        function(x) index(x@time))), normalizeBy)
+  zlim = range(timeAll)
+  col = rainbow(length(x@tracks))
+  rgl::plot3d(x = coordsAll[1:dim, 1], y = coordsAll[1:dim, 2],
+              z = timeAll[1:dim], col=col[1], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, zlab=zlab)
+
+  tracks = x@tracks[-1]
+  for(t in seq_along(tracks)) {
+    coords = sf::st_coordinates(tracks[[t]]@geometry)
+    time = normalize(index(tracks[[t]]@time), normalizeBy)
+    rgl::lines3d(x = coords[, 1], y = coords[, 2], z = time, col = col[t+1])
+  }
+  if(map){
+    maplimx = xlim + c(-0.1,0.1) * diff(xlim)
+    maplimy = ylim + c(-0.1,0.1) * diff(ylim)
+    map <- OSM(xlim = maplimx, ylim= maplimy, mapType = "osm", mapZoom = NULL, projection = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84")
+    map3d(map, z = timeAll[1], add=T)
+  }
 }
+
+setMethod("pv_stcube", "sfTracks", pv_stcube.sfTracks)
