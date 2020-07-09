@@ -268,3 +268,34 @@ pv_stcube.sfTracks <- function(x, value, map=FALSE, normalizeBy = "week", xlab='
 
 setMethod("pv_stcube", "sfTracks", pv_stcube.sfTracks)
 
+
+if(!isGeneric("intersection_cube"))
+  setGeneric("intersection_cube", function(x, ...)
+    standardGeneric("intersection_cube"))
+
+
+
+
+intersection_cube.sfTracks <- function(x, map=FALSE, normalizeBy = "week", xlab='x', ylab='y', zlab='z', ...){
+  xlim = c(st_bbox(x@tracks[[1]]@geometry)[[1]], st_bbox(st_bbox(x@tracks[[1]]@geometry))[[3]])
+  ylim = c(st_bbox(x@tracks[[1]]@geometry)[[2]], st_bbox(x@tracks[[1]]@geometry)[[4]])
+
+  dim = length(x@tracks[[1]]@geometry)
+  coordsAll = sft_coordinates(x)
+  timeAll = normalize(do.call(c, lapply(x@tracks,
+                                        function(x) index(x@time))), normalizeBy)
+  zlim = range(timeAll)
+  col = rainbow(length(x@tracks))
+
+
+  rgl::plot3d(x = coordsAll[1:dim, 1], y = coordsAll[1:dim, 2],
+                z = timeAll[1:dim], col=col[1], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, zlab=zlab)
+  tracks = x@tracks[-1]
+  for(t in seq_along(tracks)) {
+    coords = sf::st_coordinates(tracks[[t]]@geometry)
+    time = normalize(index(tracks[[t]]@time), normalizeBy)
+    rgl::lines3d(x = coords[, 1], y = coords[, 2], z = time, col = col[t+1])
+  }
+}
+
+setMethod("intersection_cube", "sfTracks", intersection_cube.sfTracks)
