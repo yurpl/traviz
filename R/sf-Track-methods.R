@@ -276,6 +276,8 @@ if(!isGeneric("intersection_cube"))
 
 
 
+#TODO:
+# Add intersection points
 intersection_cube.sfTracks <- function(x, map=FALSE, normalizeBy = "week", xlab='x', ylab='y', zlab='z', ...){
   xlim = c(st_bbox(x@tracks[[1]]@geometry)[[1]], st_bbox(st_bbox(x@tracks[[1]]@geometry))[[3]])
   ylim = c(st_bbox(x@tracks[[1]]@geometry)[[2]], st_bbox(x@tracks[[1]]@geometry)[[4]])
