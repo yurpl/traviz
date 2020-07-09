@@ -287,6 +287,7 @@ intersection_cube.sfTracks <- function(x, map=FALSE, normalizeBy = "week", xlab=
   zlim = range(timeAll)
   col = rainbow(length(x@tracks))
 
+  i_points = sf::st_intersection(sft63@line, sft64@line)
 
   rgl::plot3d(x = coordsAll[1:dim, 1], y = coordsAll[1:dim, 2],
                 z = timeAll[1:dim], col=col[1], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, zlab=zlab)

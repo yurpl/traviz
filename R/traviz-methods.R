@@ -537,3 +537,12 @@ plot_hour <- function(df, value, xmin, xmax, ymin, ymax){
   }
 }
 
+#' Plot time series of track
+#' @param sft sfTrack
+#' @param value y value
+#' @return ggplot time series
+
+sft.plot_ts <- function(sft, value){
+  p <- ggplot(sft@data) + geom_point(aes(x=time, y=.data[[value]])) + ggtitle("Track time series")
+  return(p)
+}
