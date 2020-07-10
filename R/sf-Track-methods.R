@@ -248,7 +248,7 @@ pv_stcube.sfTracks <- function(x, value, map=FALSE, normalizeBy = "week", xlab='
   }
   else{
     rgl::plot3d(x = coordsAll[1:dim, 1], y = coordsAll[1:dim, 2],
-                z = timeAll[1:dim], col=col[1], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, zlab=zlab, plot=FALSE)
+                z = timeAll[1:dim], col=col[1], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, zlab=zlab)
 
     tracks = x@tracks
     for(t in seq_along(tracks)) {
