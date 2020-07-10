@@ -547,3 +547,14 @@ sft.plot_ts <- function(sft, value){
   return(p)
 }
 
+#' Plot violin plot of sfTracks value
+#' @param sfts sfTracks
+#' @param value y calue
+#' @return violin plot
+
+sfts.plot_violin <- function(sfts, value){
+  df <- as(sfts, 'data.frame')
+  df$track.id <- as.factor(df$track.id)
+  p <- ggplot(data = df, aes(x=track.id, y=.data[[value]], fill=track.id)) + geom_violin()
+  return(p)
+}
