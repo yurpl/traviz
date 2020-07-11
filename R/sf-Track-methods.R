@@ -301,14 +301,46 @@ vscube.sfTrack <- function(x, value, map=TRUE, ...){
 
 setMethod("vscube", "sfTrack", vscube.sfTrack)
 
+vscube.sfTracks <- function(x, value, map=FALSE, xlab='x', ylab='y', ...){
+
+  xlim = c(st_bbox(x@tracks[[1]]@geometry)[[1]], st_bbox(st_bbox(x@tracks[[1]]@geometry))[[3]])
+  ylim = c(st_bbox(x@tracks[[1]]@geometry)[[2]], st_bbox(x@tracks[[1]]@geometry)[[4]])
+
+  dim = length(x@tracks[[1]]@geometry)
+  coordsAll = sft_coordinates(x)
+  stsdf = as(x, 'data.frame')
+  valuesAll = stsdf[[value]]
+  col = rainbow(length(x@tracks))
+
+  if(missing(value)){
+    stop("Missing value for value space cube")
+  }
+
+  else{
+    rgl::plot3d(x = coordsAll[1:dim, 1], y = coordsAll[1:dim, 2],
+                z = valuesAll[1:dim], col=col[1], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, zlab=value, colvar = valuesAll, clab = value, plot=FALSE)
+
+    for(t in seq_along(x@tracks)) {
+      coords = sf::st_coordinates(x@tracks[[t]]@geometry)
+      v = x@tracks[[t]]@data[[value]]
+      plot3Drgl::scatter3Drgl(x = coords[, 1], y = coords[, 2], z = v, clab = value, add=TRUE)
+    }
+  }
+
+  if(map){
+    maplimx = xlim + c(-0.1,0.1) * diff(xlim)
+    maplimy = ylim + c(-0.1,0.1) * diff(ylim)
+    map <- OSM(xlim = maplimx, ylim= maplimy, mapType = "osm", mapZoom = NULL, projection = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84")
+    map3d(map, z = 0, add=T)
+  }
+}
+
+
 
 
 if(!isGeneric("intersection_cube"))
   setGeneric("intersection_cube", function(x, ...)
     standardGeneric("intersection_cube"))
-
-
-
 
 #TODO:
 # Add intersection points
