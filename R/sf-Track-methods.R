@@ -268,6 +268,40 @@ pv_stcube.sfTracks <- function(x, value, map=FALSE, normalizeBy = "week", xlab='
 
 setMethod("pv_stcube", "sfTracks", pv_stcube.sfTracks)
 
+if(!isGeneric("vscube"))
+  setGeneric("vscube", function(x, ...)
+    standardGeneric("vscube"))
+
+
+vscube.sfTrack <- function(x, value, map=TRUE, ...){
+  coords = sf::st_coordinates(x@geometry)
+  xlim = c(st_bbox(x@geometry)[[1]], st_bbox(x@geometry)[[3]])
+  ylim = c(st_bbox(x@geometry)[[2]], st_bbox(x@geometry)[[4]])
+  if(missing(value)){
+    stop("Missing value for value space cube")
+
+  }
+
+  else{
+    plot3Drgl::scatter3Drgl(x = st_coordinates(x@geometry)[,1], y = st_coordinates(x@geometry)[,2], z = x@data[[value]],
+                            xlim = xlim,
+                            ylim = ylim,
+                            colvar = x@data[[value]],
+                            ticktype = "detailed",
+                            clab = value,
+                            xlab = "x", ylab = "y", zlab =value)
+  }
+  if(map){
+    maplimx = xlim + c(-0.1,0.1) * diff(xlim)
+    maplimy = ylim + c(-0.1,0.1) * diff(ylim)
+    map <- OSM(xlim = maplimx, ylim= maplimy, mapType = "osm", mapZoom = NULL, projection = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84")
+    map3d(map, z = 0, add=T)
+  }
+}
+
+setMethod("vscube", "sfTrack", vscube.sfTrack)
+
+
 
 if(!isGeneric("intersection_cube"))
   setGeneric("intersection_cube", function(x, ...)
