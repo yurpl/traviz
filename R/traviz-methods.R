@@ -543,7 +543,7 @@ plot_hour <- function(df, value, xmin, xmax, ymin, ymax){
 #' @return ggplot time series
 
 sft.plot_ts <- function(sft, value){
-  p <- ggplot(sft@data) + geom_point(aes(x=time, y=.data[[value]])) + ggtitle("Track time series")
+  p <- ggplot(sft@data) + geom_point(aes(x=time, y=.data[[value]])) + ggtitle("Track value time series")
   return(p)
 }
 
@@ -558,3 +558,4 @@ sfts.plot_violin <- function(sfts, value){
   p <- ggplot(data = df, aes(x=track.id, y=.data[[value]], fill=track.id)) + geom_violin()
   return(p)
 }
+
