@@ -4,10 +4,10 @@
 \alias{traj_quadrat}
 \title{Plot quadrat intensity of points of a trajectory}
 \usage{
-traj_quadrat(trajectories)
+traj_quadrat(df)
 }
 \arguments{
-\item{trajectories}{sf trajectories data frame}
+\item{df}{sf trajectories data frame}
 }
 \value{
 plot of density heat map

@@ -4,12 +4,12 @@
 \alias{plot_traj}
 \title{Plot trajectories using ggplot2}
 \usage{
-plot_traj(trajectories, value)
+plot_traj(df, value)
 }
 \arguments{
-\item{trajectories}{trajectories data frame}
-
 \item{value}{value to base scale off}
+
+\item{trajectories}{trajectories data frame}
 }
 \value{
 ggplot2 of trajectories

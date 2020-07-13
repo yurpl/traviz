@@ -4,10 +4,10 @@
 \alias{traj_heatmap}
 \title{Plot kernel density heat map of trajectories}
 \usage{
-traj_heatmap(trajectories)
+traj_heatmap(df)
 }
 \arguments{
-\item{trajectories}{trajectories dataframe}
+\item{df}{trajectories dataframe or sfTrack or sfTracks}
 }
 \value{
 kernel density heatmap

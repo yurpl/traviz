@@ -4,10 +4,10 @@
 \alias{cluster_traj}
 \title{Cluster trajectories}
 \usage{
-cluster_traj(trajectories, num_clusters)
+cluster_traj(df, num_clusters)
 }
 \arguments{
-\item{trajectories}{trajectories data frame in sf format}
+\item{df}{trajectories data frame in sf format or sfTrack or sfTracks}
 
 \item{num_clusters}{desired number of clusters}
 }

@@ -7,7 +7,7 @@
 find_intersections_density(df, resolution)
 }
 \arguments{
-\item{df}{sf data frame}
+\item{df}{sf data frame or sfTrack or sfTracks}
 
 \item{resolution}{desired resolution}
 }

@@ -7,7 +7,7 @@
 aggregate_sf_roi(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL)
 }
 \arguments{
-\item{df}{sf data frame of trajectories with geometry column}
+\item{df}{sf data frame of trajectories with geometry column or sfTrack or sfTracks}
 
 \item{xmin}{min x}
 

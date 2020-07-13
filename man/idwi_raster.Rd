@@ -7,7 +7,7 @@
 idwi_raster(df, measurement, resolution)
 }
 \arguments{
-\item{df}{data frame}
+\item{df}{data frame or sfTrack or sfTracks}
 
 \item{measurement}{measurement to rasterize off}
 

@@ -7,7 +7,7 @@
 sf_to_rasterize(df, data, resolution, from, to)
 }
 \arguments{
-\item{df}{Trajectory data frame in sf format to rasterize}
+\item{df}{Trajectory data frame in sf format to rasterize or sfTrack or sfTracks}
 
 \item{data}{Data values wanted to rasterize}
 

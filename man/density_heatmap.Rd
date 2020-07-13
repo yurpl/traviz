@@ -4,14 +4,16 @@
 \alias{density_heatmap}
 \title{Plot kernel density heat map of trajectory measurements}
 \usage{
-density_heatmap(trajectories, value, resolution)
+density_heatmap(df, value, resolution, date)
 }
 \arguments{
-\item{trajectories}{trajectories data frame}
+\item{df}{trajectories data frame or sfTrack or sfTracks}
 
 \item{value}{value desired to make heat map off}
 
 \item{resolution}{desired resolution}
+
+\item{date}{optional parameter to create a day heatmap with 6 plots and 4 hour intervals}
 }
 \value{
 plot of density heat map
