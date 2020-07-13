@@ -368,3 +368,19 @@ intersection_cube.sfTracks <- function(x, map=FALSE, normalizeBy = "week", xlab=
 }
 
 setMethod("intersection_cube", "sfTracks", intersection_cube.sfTracks)
+
+
+if(!isGeneric("to_geojson"))
+  setGeneric("to_geojson", function(x, ...)
+    standardGeneric("to_geojson"))
+
+sfTrack.to_geojson <- function(x){
+  return(geojsonsf::sfc_geojson(x@line))
+}
+setMethod("to_geojson", "sfTrack", sfTrack.to_geojson)
+
+sfTracks.to_geojson <- function(x){
+  return(lapply(x@tracks, to_geojson))
+}
+
+setMethod("to_geojson", "sfTracks", sfTracks.to_geojson)
