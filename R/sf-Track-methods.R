@@ -385,3 +385,4 @@ sfTracks.to_geojson <- function(x){
 }
 
 setMethod("to_geojson", "sfTracks", sfTracks.to_geojson)
+
