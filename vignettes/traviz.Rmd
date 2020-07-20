@@ -1,0 +1,35 @@
+---
+title: "Introduction to traviz"
+output: rmarkdown::html_vignette
+description: >
+  Start here to learn how to use traviz. traviz is a package to meaningfully analyze and visualize trajectory data. This package inherits   from sf and the previous trajectories package aiming to bring a modern approach to analyzing and visualizing trajectory data in R. 
+vignette: >
+  %\VignetteIndexEntry{traviz}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+traviz is a package to meaningfully analyze and visualize trajectories in multiple ways. To showcase some of the features of traviz, we'll use [enviroCar](https://envirocar.org/?lng=en) trajectory data in Muenster, Germany. To collect enviroCar data, the [envirocar-py](https://github.com/enviroCar/envirocar-py) package was used. Keep in mind traviz is not limited to vehicular trajectory data only and can work with all types of trajectory data. 
+```{r setup}
+library(traviz)
+```
+## Two approaches to trajectories: point data analysis or general track analysis
+
+traviz offers two approaches to dealing with trajectory data. The trajectory can either be analyzed as a whole geometry with the complete line or the trajectory can be analyzed point by point. Both approaches will be showcased. 
+
+## Dataset: enviroCar sampled data
+
+To explore the basics of working with trajectory data in traviz, we'll use the enviroCar data included in the package. This is included as 'ec.trj'. The dataset consists of:
+```{r}
+ec <- read.csv("/home/john/Desktop/traviz/data/tracks.csv",header = TRUE, check.names = TRUE)
+ec[1,]
+```
+enviroCar trajectory data contains geographic data with geometry points in sf format, a unique identifier for each track, time stamps, and data measurements at those timestamps. 
+
+
