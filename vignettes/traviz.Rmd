@@ -19,7 +19,7 @@ traviz is a package to meaningfully analyze and visualize trajectories in multip
 ```{r setup}
 library(traviz)
 ```
-## Two approaches to trajectories: point data analysis or general track analysis
+## traviz approaches to trajectories: point analysis or overall line analysis
 
 traviz offers two approaches to dealing with trajectory data. The trajectory can either be analyzed as a whole geometry with the complete line or the trajectory can be analyzed point by point. Both approaches will be showcased. 
 
@@ -31,5 +31,38 @@ ec <- read.csv("/home/john/Desktop/traviz/data/tracks.csv",header = TRUE, check.
 ec[1,]
 ```
 enviroCar trajectory data contains geographic data with geometry points in sf format, a unique identifier for each track, time stamps, and data measurements at those timestamps. 
+
+## Approach one: point data analysis
+
+We begin by making sure the imported data is in a readable format for traviz. To do this we make first make some minor modifications to the csv and using the 'geodata_to_sf' function to convert the data to sf.
+```{r}
+ec$time <- gsub("T", " ", ec$time)
+trajectories <- geodata_to_sf(ec, "track.id")
+trajectories = trajectories[43:63,]
+trajectories_unnested = trajectories %>% unnest #remove nesting for value analysis
+```
+For speed we will only use 20 trajectories. The data is now ready to use and we can begin expirementing with traviz's methods for individual point analysis. Clear ggplot visualization of the trajectories (with normal lonlat projection) is now possible:
+
+```{r}
+ggplot(trajectories) + geom_sf(aes(color = track.id)) + theme(legend.position = "none")
+#Note: legend is hidden to reduce clutter
+```
+
+Point data analysis is now possible 
+
+### raster data
+traviz can rasterize data to a desired resolution and provide visualization of this data for a value. We will take a look at the speed values of cars in this subset of trajectories:
+```{r}
+library(raster)
+rastered_trajectories = sf_to_rasterize(trajectories_unnested, data = 'Speed.value', resolution = .0007)
+rastered_trajectories
+plot(rastered_trajectories)
+```
+
+### heatmap of trajectory values
+```{r}
+density_heatmap(trajectories_unnested, 'Speed.value', resolution = .0007)
+```
+It appears that cars seem to move faster at the bottom left and bottom right of this map of Muenster
 
 
