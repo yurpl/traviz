@@ -11,7 +11,7 @@ setClass("sfTrack",
            id = "character",
            data = "data.frame",
            time = "POSIXct",
-           geometry = "sfc",
+           points = "sfc",
            line = "sfc"
          ))
 
@@ -21,7 +21,7 @@ sfTrack = function(df, identifier){
   }
   df.un <- df %>% unnest
   df.un$geometry <- df.un$geometry %>% st_set_crs(4326)
-  new("sfTrack", id = df$track.id, data = data.frame(df$data), time = df.un$time, geometry = df.un$geometry, line = df$geometry)
+  new("sfTrack", id = df$track.id, data = data.frame(df$data), time = df.un$time, points = df.un$geometry, line = df$geometry)
 }
 
 #' Multiple sfTracks
