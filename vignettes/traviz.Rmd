@@ -50,7 +50,7 @@ ggplot(trajectories) + geom_sf(aes(color = track.id)) + theme(legend.position = 
 
 Point data analysis is now possible 
 
-### raster data
+### Raster data
 traviz can rasterize data to a desired resolution and provide visualization of this data for a value. We will take a look at the speed values of cars in this subset of trajectories:
 ```{r}
 library(raster)
@@ -59,10 +59,40 @@ rastered_trajectories
 plot(rastered_trajectories)
 ```
 
-### heatmap of trajectory values
+### Heatmap of trajectory values
 ```{r}
 density_heatmap(trajectories_unnested, 'Speed.value', resolution = .0007)
 ```
-It appears that cars seem to move faster at the bottom left and bottom right of this map of Muenster
+It appears that cars seem to move faster at the bottom left and bottom right of this map of Muenster based off the heatmap density. 
+
+### k-means clustering
+traviz  supports k-mean clustering. In future development, there will be point by point clustering.
+```{r}
+clusters <- cluster_traj(trajectories, num_clusters = 4)
+plot(clusters)
+```
+
+## Aggregation tools
+traviz supports multiple forms of trajectory aggregation. Below is a showcase of a couple of aggregation methods.
+
+### Raster aggregation:
+```{r}
+plot(aggregate_raster_region(rastered_trajectories, xmin = 7.62, xmax = 7.63, ymin = 51.93, ymax = 51.94))
+```
+
+### Trajectories by day and by hour:
+```{r}
+plot_day(trajectories_unnested)
+plot_hour(trajectories_unnested)
+```
+
+
+
+### Trajectory density by day and by hour: 
+```{r}
+plot_day_density(df = trajectories_unnested)
+plot_hour_density(df = trajectories_unnested)
+```
+
 
 

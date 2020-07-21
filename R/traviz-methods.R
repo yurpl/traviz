@@ -190,7 +190,7 @@ find_intersections_density <- function(df, resolution){
 
 cluster_traj <- function(df, num_clusters){
   df <- st_transform(df, crs = "+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs")
-  clusters <- hclust(as.dist(st_distance(df, which = "Frechet")))
+  clusters <- hclust(as.dist(sf::st_distance(df, which = "Frechet")))
   df$cluster = as.factor(cutree(clusters, num_clusters))
   return((df[,"cluster"]))
 }
@@ -458,7 +458,7 @@ plot_day_density <- function(df, xmin, xmax, ymin, ymax){
   if (!missing(xmin) && !missing(xmax) && !missing(ymin) && !missing(ymax)) {df <- aggregate_sf_roi(df, xmin, xmax, ymin, ymax)}
 
   df <- sfc_as_cols(df)
-  df$weekday = weekdays(as.Date(df$time, format="%m/%d/%Y"))
+  df$weekday = weekdays(as.Date(as.POSIXct(df$time), format="%m/%d/%Y"))
   df$weekday = factor(df$weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
   df <-df[order(df$weekday),]
 
@@ -480,7 +480,7 @@ plot_hour_density <- function(df, xmin, xmax, ymin, ymax){
   if (!missing(xmin) && !missing(xmax) && !missing(ymin) && !missing(ymax)) {df <- aggregate_sf_roi(df, xmin, xmax, ymin, ymax)}
 
   df <- sfc_as_cols(df)
-  df$time <- hour(df$time)
+  df$time <- lubridate::hour(df$time)
 
   p <- ggplot(df) + geom_sf() + stat_density2d(data = df, aes(x,y, fill = ..level.., alpha=..level..), size = 1, bins = 20, alpha=0.25,  geom = "polygon") + scale_fill_gradient(low="blue", high = "orange")+ facet_wrap(~time) + ggtitle("Aggregation by hour")
   return(p)
@@ -499,7 +499,7 @@ plot_hour_density <- function(df, xmin, xmax, ymin, ymax){
 plot_day <- function(df, value, xmin, xmax, ymin, ymax){
   if (!missing(xmin) && !missing(xmax) && !missing(ymin) && !missing(ymax)) {df <- aggregate_sf_roi(df, xmin, xmax, ymin, ymax)}
 
-  df$weekday = weekdays(as.Date(df$time, format="%m/%d/%Y"))
+  df$weekday = weekdays(as.Date(as.POSIXct(df$time), format="%m/%d/%Y"))
   df$weekday = factor(df$weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
   df <-df[order(df$weekday),]
 
@@ -525,7 +525,7 @@ plot_day <- function(df, value, xmin, xmax, ymin, ymax){
 plot_hour <- function(df, value, xmin, xmax, ymin, ymax){
   if (!missing(xmin) && !missing(xmax) && !missing(ymin) && !missing(ymax)) {df <- aggregate_sf_roi(df, xmin, xmax, ymin, ymax)}
 
-  df$time <- hour(df$time)
+  df$time <- lubridate::hour(df$time)
 
   if(missing(value)){
     p <- ggplot(df) + geom_sf() + facet_wrap(~time) + ggtitle("Aggregation by hour")
