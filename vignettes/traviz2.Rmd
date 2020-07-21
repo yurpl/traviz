@@ -1,5 +1,5 @@
 ---
-title: "traviz2"
+title: "traviz: Part 2"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{traviz2}
@@ -30,8 +30,15 @@ ec[1,]
 ```
 enviroCar trajectory data contains geographic data with geometry points in sf format, a unique identifier for each track, time stamps, and data measurements at those timestamps. 
 
+```{r, warning = FALSE}
+ec$time <- gsub("T", " ", ec$time)
+ec$time = as.POSIXct(ec$time)
+trajectories = geodata_to_sf(ec, identifier = "track.id")
+```
+Getting the enviroCar data ready for input
+
 ## Approach two: Overall line analysis
-To handle trajectory data, a model similar to [trajectories](https://github.com/edzer/trajectories) was followed, extending aspects the data structure to support sf. This class is called sfTrack and contains the following slots:
+To handle trajectory data, a model similar to [trajectories](https://github.com/edzer/trajectories) was followed, extending aspects the data structure to support sf. The class is called sfTrack and it stores a single trajectory and contains the timestamps, data, and geometry of thetrajectory. sfTrack is a S4 class and contains the following slots:
 
 * **id**: unique id value for track
 * **data**: dataframe of track data
@@ -40,3 +47,33 @@ To handle trajectory data, a model similar to [trajectories](https://github.com/
 * **line**: LINESTRING trajectory of track
 
 Similar to the Tracks class in [trajectories](https://github.com/edzer/trajectories), multiple sfTrack objects are stored under sfTracks which is a list of sfTrack objects.
+
+### Creating a sfTrack object
+To create a sfTrack, use the constructor with two parameters:
+* df: the data frame of trajectories 
+* identifier: the unique identifier for each track. In the case of enviroCar data, it is track.id
+```{r, warning = FALSE }
+track = sfTrack(df = trajectories[1,], identifier = "track.id")
+track
+```
+
+### Creating a sfTracks object
+To create a sfTracks object, combine multiple sfTrack in a list.
+```{r, warning = FALSE}
+track1 = sfTrack(df = trajectories[63,], identifier = "track.id")
+track2 = sfTrack(df = trajectories[64,], identifier = "track.id")
+track3 = sfTrack(df = trajectories[65,], identifier = "track.id")
+tracks = sfTracks(c(track1, track2, track3))
+tracks
+```
+
+## sfTrack and sfTracks methods 
+We will now showcase the methods of sfTrack and sfTracks.
+
+### Plotting
+sfTrack and sfTracks has basic plotting features:
+```{r, fig.width = 5, fig.height = 5}
+plot(track)
+plot(tracks)
+```
+

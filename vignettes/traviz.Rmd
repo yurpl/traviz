@@ -1,10 +1,10 @@
 ---
-title: "Introduction to traviz part one: Point data analysis"
+title: "traviz: Part 1"
 output: rmarkdown::html_vignette
 description: >
   Start here to learn how to use traviz. traviz is a package to meaningfully analyze and visualize trajectory data. This package inherits   from sf and the previous trajectories package aiming to bring a modern approach to analyzing and visualizing trajectory data in R. 
 vignette: >
-  %\VignetteIndexEntry{traviz1}
+  %\VignetteIndexEntry{traviz}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,7 +21,7 @@ library(traviz)
 ```
 ## traviz approaches to trajectories: point analysis or overall line analysis
 
-traviz offers two approaches to dealing with trajectory data. The trajectory can either be analyzed as a whole geometry with the complete line or the trajectory can be analyzed point by point. Both approaches will be showcased. 
+traviz offers two approaches to dealing with trajectory data. The trajectory can either be analyzed as a whole geometry with the complete line or the trajectory can be analyzed point by point. The point by point approach will be showcased in this vignette.
 
 ## Dataset: enviroCar sampled data
 

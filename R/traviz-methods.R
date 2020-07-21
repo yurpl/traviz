@@ -9,7 +9,9 @@ geodata_to_sf <- function(df, identifier){
   if(missing(identifier)){
     stop("Missing unique identifier to group geometries by")
   }
-
+  if(inherits(df$time, 'POSIXct')){
+    df$time = as.POSIXct(df$time)
+  }
   if("geometry" %in% colnames(df) && class(df$geometry) != "sfc" && class(df$geometry) != "sfc_POINT" ){
     df <- st_as_sf(df, wkt = "geometry")
   }
