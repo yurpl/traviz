@@ -2,31 +2,39 @@
 #'
 #' @param df A trajectory data frame with a geometry column or in lat long format
 #' @param identifier Unique identifier to group data frame by
+#' @param lat_col optional name of latitude column
+#' @param lon_col optional name of longitude column
 #' @return A nested data frame in sf format
 
 
-geodata_to_sf <- function(df, identifier){
+geodata_to_sf <- function(df, identifier, lon_col, lat_col){
   if(missing(identifier)){
     stop("Missing unique identifier to group geometries by")
   }
-  if(inherits(df$time, 'POSIXct')){
-    df$time = as.POSIXct(df$time)
-  }
-  if("geometry" %in% colnames(df) && class(df$geometry) != "sfc" && class(df$geometry) != "sfc_POINT" ){
-    df <- st_as_sf(df, wkt = "geometry")
-  }
-  else if("lat" %in% colnames(df) && "long" %in% colnames(df)){
-    df <- st_as_sf(coords = c("long", "lat"), crs = 4326)
+  if(missing(lat_col) && missing(lon_col)){
+    if(!inherits(df$time, 'POSIXct')){
+      df$time = as.POSIXct(df$time)
+    }
+    if("geometry" %in% colnames(df) && class(df$geometry) != "sfc" && class(df$geometry) != "sfc_POINT" ){
+      df <- st_as_sf(df, wkt = "geometry")
+    }
+    else{
+      df <- st_as_sf(df, df$geometry)
+    }
   }
   else{
-    df <- st_as_sf(df, df$geometry)
+    lat_index = match(lat_col, names(df))
+    lon_index = match(lon_col, names(df))
+    df <- st_as_sf(df, coords = c(lon_col, lat_col) , crs = 4326)
   }
+
+  #To linestring source: Edzer Pebesma https://www.r-spatial.org/r/2017/08/28/nest.html
   to_line <- function(tr) st_cast(st_combine(tr), "LINESTRING") %>% .[[1]]
 
   df.nest <- df %>% group_by(.data[[identifier]]) %>% nest
   tracks <- df.nest %>% pull(data) %>% map(to_line) %>% st_sfc(crs = 4326)
-  df.traj = df.nest %>% st_sf(geometry = tracks)
-  st_set_crs(df.traj, 4326)
+  df.traj = df.nest %>% st_sf(geometry = tracks) %>%  st_set_crs(4326)
+
   invisible(df.traj)
 }
 
