@@ -111,7 +111,7 @@ pv_stcube(track, "Speed.value")
 
 Space time cube of individual sfTrack with map overlay
 ```{r, rgl-map, webgl=TRUE, warning=FALSE}
-pv_stcube(track, "Speed.value", map=F)
+pv_stcube(track, map=T)
 ```
 
 
