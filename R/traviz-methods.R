@@ -2,8 +2,8 @@
 #'
 #' @param df A trajectory data frame with a geometry column or in lat long format
 #' @param identifier Unique identifier to group data frame by
-#' @param lat_col optional name of latitude column
-#' @param lon_col optional name of longitude column
+#' @param lon_col optional parameter for name of longitude column
+#' @param lat_col optional parameter for name of latitude column
 #' @return A nested data frame in sf format
 
 
@@ -33,7 +33,7 @@ geodata_to_sf <- function(df, identifier, lon_col, lat_col){
 
   df.nest <- df %>% group_by(.data[[identifier]]) %>% nest
   tracks <- df.nest %>% pull(data) %>% map(to_line) %>% st_sfc(crs = 4326)
-  df.traj = df.nest %>% st_sf(geometry = tracks) %>%  st_set_crs(4326)
+  df.traj = df.nest %>% st_sf(geometry = tracks) %>% st_set_crs(4326)
 
   invisible(df.traj)
 }
@@ -160,7 +160,6 @@ aggregate_sf_roi <- function(df, xmin = NULL, xmax = NULL, ymin = NULL, ymax = N
 #' @param resolution desired resolution
 #' @return Interpolated raster layer
 
-#TODO: Make more elegant
 idwi_raster <- function(df, measurement, resolution){
   if(is(df, 'sfTracks') || is(df, 'sfTrack')){
     df <- as(df, "data.frame")
@@ -221,7 +220,6 @@ traj_heatmap <- function(df){
   plot(density(linepsp), main = "Heatmap plot")
   plot(linepsp, add=TRUE)
 }
-#kd_heatmap(ec.trj)
 
 #' Plot kernel density heat map of trajectory measurements
 #' @param df trajectories data frame or sfTrack or sfTracks
@@ -231,10 +229,6 @@ traj_heatmap <- function(df){
 #' @return plot of density heat map
 
 density_heatmap <- function(df, value, resolution, date){
-  # if(is(df, 'sfTracks') || is(df, 'sfTrack')){
-  #   df <- as(df, "data.frame")
-  #   df <- st_as_sf(df)
-  # }
   if(missing(date)){
     test_rast <- sf_to_rasterize(df, value, resolution)
     rast_points <- data.frame(rasterToPoints(test_rast))
@@ -355,8 +349,8 @@ sfc_as_cols <- function(x, names = c("x","y")) {
 #' Animate single trajectory using movevis (BEWARE OF MEMORY/RENDERING PROBLEMS)
 #' @param trajectory singular trajectory data frame
 #' @param res temporal resolution (i.e. 5 = 5 mins)
-#' @param units units for temporal resolution (minutes at default)
 #' @param filename filename for output GIF
+#' @param unit units for temporal resolution (minutes at default)
 #' @return animation of trajectory in GIF
 
 animate_single_track <- function(trajectory, res, filename = "trajectory.gif", unit = "min"){
@@ -500,6 +494,7 @@ plot_hour_density <- function(df, xmin, xmax, ymin, ymax){
 #' Plot values by weekday
 #' @import lubridate
 #' @param df trajectories data frame
+#' @param value optional parameter to show measurement value
 #' @param xmin min x
 #' @param xmax max x
 #' @param ymin min y
@@ -526,6 +521,7 @@ plot_day <- function(df, value, xmin, xmax, ymin, ymax){
 #' Plot values by hour
 #' @import lubridate
 #' @param df trajectories data frame
+#' @param value optional parameter to show desired value
 #' @param xmin min x
 #' @param xmax max x
 #' @param ymin min y
