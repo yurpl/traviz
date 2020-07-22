@@ -72,6 +72,16 @@ tracks
 ## sfTrack and sfTracks methods 
 We will now showcase the methods of sfTrack and sfTracks.
 
+### Coercion to data frame
+```{r}
+track1_df = as(track1, 'data.frame')
+tracks_df = as(tracks, 'data.frame')
+
+track1_df[1,]
+tracks_df[5,]
+```
+
+
 ### Plotting
 sfTrack and sfTracks has basic plotting features:
 ```{r, fig.width = 5, fig.height = 5}
@@ -101,7 +111,7 @@ pv_stcube(track, "Speed.value")
 
 Space time cube of individual sfTrack with map overlay
 ```{r, rgl-map, webgl=TRUE, warning=FALSE}
-pv_stcube(track, "Speed.value", map=TRUE)
+pv_stcube(track, "Speed.value", map=F)
 ```
 
 
