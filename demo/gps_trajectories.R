@@ -17,3 +17,18 @@ for(i in 1:nrow(sfgps_trajectories)){
 library(mapview)
 mapview(sfgps_trajectories$geometry)
 
+#Create sfTrack
+track1 = sfTrack(sfgps_trajectories[1,])
+
+#Visualization
+plot(track1)
+pv_stcube(track1, map=T)
+
+#Point data analysis
+sfgps_trajectories_points = sfgps_trajectories %>% unnest
+subset_trajectories_points = sfgps_trajectories_points[1:1000,]
+
+plot_hour_density(subset_trajectories_points)
+plot_day_density(subset_trajectories_points)
+
+
