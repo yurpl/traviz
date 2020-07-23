@@ -21,7 +21,7 @@ sfTrack = function(df, identifier){
   }
   df.un <- df %>% unnest
   df.un$geometry <- df.un$geometry %>% st_set_crs(4326)
-  new("sfTrack", id = df$track.id, data = data.frame(df$data), time = df.un$time, geometry = df.un$geometry, line = df$geometry)
+  new("sfTrack", id = as.character(df$track.id), data = data.frame(df$data), time = as.POSIXct(df.un$time), geometry = df.un$geometry, line = df$geometry)
 }
 
 #' Multiple sfTracks
