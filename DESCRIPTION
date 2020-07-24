@@ -7,7 +7,8 @@ Maintainer: John Murzaku <john.murzaku@gmail.com>
 Description: sfTrack class to support sf trajectories with methods for trajectory visualization and analysis. Support for point pattern analysis, rasterization of trajectory data, and hotspot analysis.
 Imports: 
   lubridate,
-  moveVis
+  moveVis,
+  raster
 Depends:
     sf,
     trajectories,
