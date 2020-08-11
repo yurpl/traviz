@@ -15,9 +15,15 @@ setClass("sfTrack",
            line = "sfc"
          ))
 
-sfTrack = function(df, identifier){
+sfTrack = function(df, identifier, lon_col, lat_col){
   if(!is(df, "sf")){
-    df <- geodata_to_sf(df, identifier)
+    if(missing(lon_col) && missing(lat_col)){
+      df <- geodata_to_sf(df, identifier)
+    }
+    else{
+      df <- geodata_to_sf(df, identifier, lon_col, lat_col)
+    }
+
   }
   df.un <- df %>% unnest
   df.un$geometry <- df.un$geometry %>% st_set_crs(4326)
