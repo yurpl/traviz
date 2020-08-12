@@ -564,21 +564,3 @@ sfts.plot_violin <- function(sfts, value){
   p <- ggplot(data = df, aes(x=track.id, y=.data[[value]], fill=track.id)) + geom_violin()
   return(p)
 }
-
-#' Calendar heatmap of trajectories data frame
-#' @param df data frame of trajectories
-#' @param value value for heatmap
-#' @return calendar heatmap
-
-calendar_heatmap <- function(df, value){
-  library(lubridate)
-  df$weekday = weekdays(as.Date(df$time, format="%m/%d/%Y"))
-  df$weekday = factor(df$weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
-  df <-df[order(df$weekday),]
-
-  df$hour == factor(hour(ymd_hms(df$time)))
-
-  p <- ggplot(df, aes(weekday, hour, fill = Speed.value)) +
-    geom_tile(colour = "white") + facet_grid(~weekday) + scale_fill_gradient(low="red", high="green")
-  return(p)
-}

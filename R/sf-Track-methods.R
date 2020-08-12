@@ -100,7 +100,7 @@ setAs("sfTrack", "Track",
         geometry <- sf::as_Spatial(from@geometry)
         geometry@proj4string = CRS("+proj=longlat +datum=WGS84")
         stidf <- STIDF(sp::geometry(geometry), from@time, from@data)
-        track = Track(stidf)
+        track = trajectories::Track(stidf)
         return(track)
       })
 
