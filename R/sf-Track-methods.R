@@ -125,6 +125,24 @@ setAs("sfTracks", "data.frame",
       }
       )
 
+#Coerce to sf
+setAs("sfTrack", "sf",
+      function(from){
+        df = as(from, 'data.frame')
+        df = st_sf(df)
+        return(df)
+      }
+      )
+
+setAs("sfTracks", "sf",
+      function(from){
+        df = as(from, 'data.frame')
+        df = st_sf(df)
+        return(df)
+      }
+      )
+
+
 sft_bbox <- function(sft){
   return(sf::st_bbox(sft@line))
 }
