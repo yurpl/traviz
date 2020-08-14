@@ -18,7 +18,7 @@ animate_single_track(
 
 \item{filename}{filename for output GIF}
 
-\item{units}{units for temporal resolution (minutes at default)}
+\item{unit}{units for temporal resolution (minutes at default)}
 }
 \value{
 animation of trajectory in GIF

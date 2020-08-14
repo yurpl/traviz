@@ -4,12 +4,16 @@
 \alias{geodata_to_sf}
 \title{Convert trajectory data frame in  or lat long format to sf}
 \usage{
-geodata_to_sf(df, identifier)
+geodata_to_sf(df, identifier, lon_col, lat_col)
 }
 \arguments{
 \item{df}{A trajectory data frame with a geometry column or in lat long format}
 
 \item{identifier}{Unique identifier to group data frame by}
+
+\item{lon_col}{optional parameter for name of longitude column}
+
+\item{lat_col}{optional parameter for name of latitude column}
 }
 \value{
 A nested data frame in sf format

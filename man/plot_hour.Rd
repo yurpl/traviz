@@ -9,6 +9,8 @@ plot_hour(df, value, xmin, xmax, ymin, ymax)
 \arguments{
 \item{df}{trajectories data frame}
 
+\item{value}{optional parameter to show desired value}
+
 \item{xmin}{min x}
 
 \item{xmax}{max x}

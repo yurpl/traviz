@@ -96,22 +96,22 @@ intersection.sfTrack(track1, track2)
 
 
 
-### Space time cubes
-traviz supports space time cube functionality with an extension of the space time cube found in [trajectories](https://github.com/edzer/trajectories).
+<!-- ### Space time cubes -->
+<!-- traviz supports space time cube functionality with an extension of the space time cube found in [trajectories](https://github.com/edzer/trajectories). -->
 
-Space time cube of individual sfTrack
-```{r, rgl-track, webgl=TRUE}
-pv_stcube(track)
-```
+<!-- Space time cube of individual sfTrack -->
+<!-- ```{r, rgl-track, webgl=TRUE} -->
+<!-- pv_stcube(track) -->
+<!-- ``` -->
 
-Space time cube of individual sfTrack with speed values
-```{r, rgl-pv-track, webgl=TRUE}
-pv_stcube(track, "Speed.value")
-```
+<!-- Space time cube of individual sfTrack with speed values -->
+<!-- ```{r, rgl-pv-track, webgl=TRUE} -->
+<!-- pv_stcube(track, "Speed.value") -->
+<!-- ``` -->
 
-Space time cube of individual sfTrack with map overlay
-```{r, rgl-map, webgl=TRUE, warning=FALSE}
-pv_stcube(track, map=T)
-```
+<!-- Space time cube of individual sfTrack with map overlay -->
+<!-- ```{r, rgl-map, webgl=TRUE, warning=FALSE} -->
+<!-- pv_stcube(track, map=T) -->
+<!-- ``` -->
 
 
