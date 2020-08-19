@@ -1,6 +1,6 @@
 # traviz
 ## Google Summer of Code 2020
-[traviz](https://summerofcode.withgoogle.com/projects/#5517386007969792) is my Google Summer of Code 2020 project. 
+traviz is my Google Summer of Code 2020 project. To see the official project dashboard, use the following link (https://summerofcode.withgoogle.com/projects/#5517386007969792)
 
 ## A general purpose trajectory analytics toolbox 
 traviz contains two classes to store trajectories:
