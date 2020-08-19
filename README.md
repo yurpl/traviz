@@ -4,11 +4,11 @@ traviz is my Google Summer of Code 2020 project. To see the project abstract, us
 
 ## A general purpose trajectory analytics toolbox 
 traviz contains two classes to store trajectories:
-* `sfTrack`- store an individual trajectory
-* `sfTracks`- store a collection of trajectories
+* `sfTrack`- store an individual track/trajectory
+* `sfTracks`- store a collection of sfTrack objects (trajectories)
 
 `sfTrack` and `sfTracks` generic methods include:
-* `sf::`- transform, st_coordinates, intersection, st_distance, st_bbox, st_length (https://github.com/r-spatial/sf)
+* `sf::`- st_transform, st_coordinates, st_intersection, st_distance, st_bbox, st_length (https://github.com/r-spatial/sf)
 * `pv_stcube`- point value space time cube 
 * `vscube`- value space cube 
 * `cluster`- clustering of Tracks
