@@ -8,7 +8,7 @@ traviz contains two classes to store trajectories:
 * `sfTracks`- store a collection of trajectories
 
 `sfTrack` and `sfTracks` generic methods include:
-* [sf](https://github.com/r-spatial/sf) methods- transform, st_coordinates, intersection, st_distance, st_bbox, st_length
+* `sf::`- transform, st_coordinates, intersection, st_distance, st_bbox, st_length (https://github.com/r-spatial/sf)
 * `pv_stcube`- point value space time cube 
 * `vscube`- value space cube 
 * `cluster`- clustering of Tracks
