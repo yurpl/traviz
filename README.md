@@ -15,14 +15,15 @@ The main functionality of traviz include the following:
 * Heatmap, hotspot, and density visualization 
 
 ## Blog posts:
-[Introductory blog post](https://blog.52north.org/2020/05/29/trajectory-analytics-toolbox-in-r/)
+[Introductory blog post](https://blog.52north.org/2020/05/29/trajectory-analytics-toolbox-in-r/) 
+
 [Midterm blog post](https://blog.52north.org/2020/07/10/trajectory-analytics-toolbox-midterm-post/)
 
 ## Weekly progress status
 [Weekly progress status for Google Summer of Code 2020](https://wiki.52north.org/Projects/GSoC2020TrajectoryAnalyticsToolbox)
 
 ## Installation
-To install the most current development version:
+To install the most current version:
 ```R
 devtools::install_github("JamMurz/traviz")
 ```
