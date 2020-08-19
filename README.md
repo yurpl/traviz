@@ -1,13 +1,24 @@
 # traviz
 ## Google Summer of Code 2020
-traviz is my Google Summer of Code 2020 project. To see the official project dashboard, use the following link https://summerofcode.withgoogle.com/projects/#5517386007969792
+traviz is my Google Summer of Code 2020 project. To see the project abstract, use the following link https://summerofcode.withgoogle.com/projects/#5517386007969792
 
 ## A general purpose trajectory analytics toolbox 
 traviz contains two classes to store trajectories:
 * `sfTrack`- store an individual trajectory
 * `sfTracks`- store a collection of trajectories
 
-The main functionality of traviz include the following:
+`sfTrack` and `sfTracks` generic methods include:
+* [sf](https://github.com/r-spatial/sf) methods- transform, st_coordinates, intersection, st_distance, st_bbox, st_length
+* `pv_stcube`- point value space time cube 
+* `vscube`- value space cube 
+* `cluster`- clustering of Tracks
+
+traviz also contains convertor methods:
+* `geodata_to_sf`- converts geographic point data to a trajectory in sf format
+* `sf_to_rasterize`- converts sf data to raster point data
+* `sfTrack` and `sfTracks` coercion methods: coerce classes to `data.frame`, `sf`, `Track`, `geojson`
+
+The main methods of traviz perform the following:
 * Aggregation and subsetting of trajectories or trajectory point values
 * Plotting of individual trajectories or a collection of trajectories
 * Rasterization of point values in trajectories 
