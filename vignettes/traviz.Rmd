@@ -27,7 +27,7 @@ traviz offers two approaches to dealing with trajectory data. The trajectory can
 
 To explore the basics of working with trajectory data in traviz, we'll use the enviroCar data included in the package. This is included as 'ec.trj'. The dataset consists of:
 ```{r}
-ec <- read.csv("/home/john/Desktop/traviz/data/tracks.csv",header = TRUE, check.names = TRUE)
+ec <- read.csv("../data/tracks.csv", header = TRUE)
 ec[1,]
 ```
 enviroCar trajectory data contains geographic data with geometry points in sf format, a unique identifier for each track, time stamps, and data measurements at those timestamps. 
