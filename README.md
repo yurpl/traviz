@@ -30,6 +30,8 @@ The main methods of traviz perform the following:
 
 [Midterm blog post](https://blog.52north.org/2020/07/10/trajectory-analytics-toolbox-midterm-post/)
 
+[Final blog post](https://blog.52north.org/2020/09/07/trajectory-analytics-toolbox-final-post/)
+
 ## Weekly progress status
 [Weekly progress status for Google Summer of Code 2020](https://wiki.52north.org/Projects/GSoC2020TrajectoryAnalyticsToolbox)
 
